@@ -1,6 +1,38 @@
 const express = require('express');
 const router = express.Router();
 const Schedule = require('../models/schedule');
+const User = require('../models/User');
+
+// Login API
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const userData = await User.findOne({ email: email });
+
+        if (!userData) {
+            return res.status(404).json({ error: 'Invalid credentials' });
+        }
+
+        if (userData.password !== password) {
+            return res.status(404).json({ error: 'Invalid credentials' });
+        }
+
+        // If the password matches, return user info
+        const { userID, firstname, lastname } = userData;
+
+        res.status(200).json({
+            id: userID,
+            firstname: firstname,
+            lastname: lastname,
+            error: ''
+        });
+
+    } catch (err) {
+        console.error('Error during login:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 // Register API
 
