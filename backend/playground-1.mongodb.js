@@ -9,8 +9,8 @@
 // For more documentation on playgrounds please refer to
 // https://www.mongodb.com/docs/mongodb-vscode/playgrounds/
 
-// Select the database to use.
-use('AdvisorAI');
+
+use('AdvisorAI');                 // select the database to use.
 
 db.getCollection('schedules').insertMany([
   {
@@ -36,8 +36,8 @@ const userSchedules = db.getCollection('schedules').find({
 console.log("User 12345's schedule:", userSchedules);
 
 db.getCollection('schedules').aggregate([
-  // Group total study hours for each subject
-  { $unwind: "$schedule" },
+  { $unwind: "$schedule" },                 // total study hours for each subject
+
   { $group: { _id: "$schedule.subject", totalHours: { $sum: "$schedule.hours" } } }
 ]);
 
