@@ -2,6 +2,27 @@ const express = require('express');
 const router = express.Router();
 const Schedule = require('../models/schedule');
 
+// Register
+
+router.post('/register', async (req, res) => {
+    const { firstname, lastname, username, password, email } = req.body;
+
+    try {
+        const newUser = new User({ firstname, lastname, username, password, email });
+        await newUser.save();
+        res.status(201).json({ message: 'User registered successfully' });
+
+    }
+    // if email in use in database
+    // message: 'Email already in use'
+    // don't register with this email
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Registration failed' });
+    }
+    // should also check if person is already registered
+});
+
 // Search API
 
 router.post('/search', async (req, res) => {
