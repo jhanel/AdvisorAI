@@ -58,11 +58,7 @@ db.getCollection('schedules').aggregate([
   { $unwind: "$schedule" },                 // total study hours for each subject
 
   { $group: { _id: "$schedule.subject", totalHours: { $sum: "$schedule.hours" } } }
-]);*/
-
-
-
-
+]);
 
 /*
 // Insert a few documents into the sales collection.
