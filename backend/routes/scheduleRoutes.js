@@ -5,9 +5,9 @@ const Schedule = require('../models/schedule');
 // Register API
 
 router.post('/register', async (req, res) => {
-    const { firstname, lastname, username, password, email, userId } = req.body;
+    const { firstname, lastname, email, password, userId } = req.body;
 
-    if ( !firstname || !lastname || !username || !password || !email || !userId ) 
+    if ( !firstname || !lastname || !email || !password || !userId ) 
     {
         return res.status(400).json({ error: 'Missing required field(s).' });
     }
@@ -20,7 +20,7 @@ router.post('/register', async (req, res) => {
         }
 
         // creating a new user
-        const newUser = new User({ firstname, lastname, username, password, email, userId });
+        const newUser = new User({ firstname, lastname, email, password, userId });
         const registerUser = await newUser.save();
         if (registerUser) {
             res.status(201).json({ message: 'User registered successfully' });
