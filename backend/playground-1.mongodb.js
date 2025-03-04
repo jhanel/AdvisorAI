@@ -41,6 +41,34 @@ db.getCollection('schedules').aggregate([
   { $group: { _id: "$schedule.subject", totalHours: { $sum: "$schedule.hours" } } }
 ]);
 
+// database for user input
+db.getCollection('userInput').insertMany([
+  {
+    "userId": "12345",
+    "userInput": [
+      {"firstname": "Rick", "lastname": "Leinecker", "email": "rickleninecker@ucf.edu", "password": "COP4331"}
+    ]
+  },
+  {
+    "userId": "67890",
+    "userInput": [
+      {"firstname": "Bob", "lastname": "Duncan", "email": "bobduncan123@gmail.com", "password": "bobduncan123"}
+    ]
+  },
+  {
+    "userId": "1",
+    "userInput": [
+      {"firstname": "Charlie", "lastname": "Brown", "email": "peanuts8321@yahoo.com", "password": "WeLovePeanuts"}
+    ]
+  },
+  {
+    "userId": "2",
+    "userInput": [
+      {"firstname": "Monica", "lastname": "Smith", "email": "monicasmith@icloud.com", "password": "m0nicaSm1th"}
+    ]
+  }
+]);
+
 /*
 // Insert a few documents into the sales collection.
 db.getCollection('sales').insertMany([

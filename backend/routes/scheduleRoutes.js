@@ -2,25 +2,35 @@ const express = require('express');
 const router = express.Router();
 const Schedule = require('../models/schedule');
 
-// Register
+// Register API
 
 router.post('/register', async (req, res) => {
-    const { firstname, lastname, username, password, email } = req.body;
+    const { firstname, lastname, username, password, email, userId } = req.body;
+
+    if ( !firstname || !lastname || !username || !password || !email || !userId ) 
+    {
+        return res.status(400).json({ error: 'Missing required field(s).' });
+    }
 
     try {
-        const newUser = new User({ firstname, lastname, username, password, email });
-        await newUser.save();
-        res.status(201).json({ message: 'User registered successfully' });
+        // check if email is already in use
+        const emails = await User.find({ email });
+        if (emails) {
+            return res.status(409).json({ message: 'Email already in use' });
+        }
 
+        // creating a new user
+        const newUser = new User({ firstname, lastname, username, password, email, userId });
+        const registerUser = await newUser.save();
+        if (registerUser) {
+            res.status(201).json({ message: 'User registered successfully' });
+        }
     }
-    // if email in use in database
-    // message: 'Email already in use'
-    // don't register with this email
+    
     catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Registration failed' });
     }
-    // should also check if person is already registered
 });
 
 // Search API
@@ -44,8 +54,6 @@ router.post('/search', async (req, res) => {
         res.status(500).json({ error: 'Error retrieving schedule.' });
     }
 });
-
-//module.exports = router;
 
 // Edit API
 
