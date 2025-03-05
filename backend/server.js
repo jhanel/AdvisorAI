@@ -31,4 +31,4 @@ app.use((req, res, next) =>
   next();
 });
 
-app.listen(5002); 
+app.listen(5002, '0.0.0.0',); 
