@@ -1,5 +1,3 @@
-// HYUGO WILL PROVIDE THIS BUT FOR NOW I'M USING LEINECKER'S
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -10,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGO_URI, {useNewURLParser: true, useUnifiedTopology: true})
+mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => console.log("MongoDB Connected!"))
     .catch(err => console.error("MongoDB Connection Error:", err));
 
@@ -33,4 +31,4 @@ app.use((req, res, next) =>
   next();
 });
 
-app.listen(5002); 
+app.listen(5002, '0.0.0.0'); 

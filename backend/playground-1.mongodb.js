@@ -12,6 +12,27 @@
 
 use('AdvisorAI');                 // select the database to use.
 
+db.getCollection('Courses').insertMany([
+  {
+    "userId": 123,
+    "exam": "Midterm Math",
+    "assignment": "Math Homework 1",
+    "quiz": "Math Quiz 1",
+  },
+  {
+    "userId": 456,
+    "exam": "Science Final",
+    "assignment": "Lab 1",
+    "quiz": "Science Quiz 1",
+  }
+]);
+
+db.getCollection('Courses').find()    // verify that courses were inserted
+
+
+// Schedules
+/*db.getCollection('schedules').insertMany([
+
 function genName(length) {
   let result = '';
   const characters = 'abcdefghijklmnopqrstuvwxyz';
@@ -44,6 +65,7 @@ for (let i = 0; i < 2; i++) {
 
 /*
 db.getCollection('schedules').insertMany([
+
   {
     "userId": "12345",
     "schedule": [

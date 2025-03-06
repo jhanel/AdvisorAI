@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const ScheduleSchema = new mongoose.Schema
 ({
-    userId: String,
+    userId: Number,
     schedule: Array     // stores study sessions
 });
 
