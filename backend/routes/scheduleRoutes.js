@@ -48,19 +48,16 @@ router.post('/register', async (req, res) => {
 
     try {
         // checks if an email is already in use
-        const emails = await User.findOne({ email: email });
-        if (emails) {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.status(409).json({ message: 'Email already in use' });
         }
 
         // creating a new user
-        else {
-            const newUser = new User({ firstname, lastname, email, password, userId });
-            const registerUser = await newUser.save();
-            if (registerUser) {
-                res.status(201).json({ message: 'User registered successfully' });
-            }
-        }
+        const newUser = new User({ firstname, lastname, email, password, userId });
+        await newUser.save();
+        res.status(201).json({ message: 'User registered successfully' });
+    
     }
     
     // registration failed
