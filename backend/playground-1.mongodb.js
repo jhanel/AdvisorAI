@@ -12,6 +12,18 @@
 
 use('AdvisorAI');                 // select the database to use.
 
+db.getCollection('Courses').insertOne({
+  userId: ObjectId("650d5e3f2c9a7f1a9e123456"),
+  name: "Test Course",
+  description: "This is a test course",
+  difficulty: "Medium",
+  duration: 40
+});
+
+db.getCollection('Courses').find().pretty();
+
+
+/*
 db.getCollection('Courses').insertMany([
   {
     "userId": 123,
@@ -28,7 +40,7 @@ db.getCollection('Courses').insertMany([
 ]);
 
 db.getCollection('Courses').find()    // verify that courses were inserted
-
+*/
 
 // Schedules
 /*db.getCollection('schedules').insertMany([

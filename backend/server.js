@@ -13,8 +13,13 @@ mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopolo
     .then(() => console.log("MongoDB Connected!"))
     .catch(err => console.error("MongoDB Connection Error:", err));
 
+// Schedule APIs
 const scheduleRoutes = require('./routes/scheduleRoutes');
 app.use('/api/schedule', scheduleRoutes);
+
+// Course APIs
+const courseRoutes = require("./routes/courseRoutes");
+app.use("/api/courses", courseRoutes);
 
 const PORT = process.env.PORT || 5002;
 
