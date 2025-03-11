@@ -1,14 +1,15 @@
+require('dotenv').config({ path: './.env' });
+const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mongoose = require('mongoose');
-require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI, {useNewURLParser: true, useUnifiedTopology: true})
+mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB Connected!"))
     .catch(err => console.error("MongoDB Connection Error:", err));
 
@@ -31,4 +32,4 @@ app.use((req, res, next) =>
   next();
 });
 
-app.listen(5002); 
+app.listen(5002, '0.0.0.0'); 
