@@ -2,6 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Schedule = require('../models/schedule');
 const User = require('../models/User');
+const User = require('../models/User');
+
+//Creates cookie for session
+router.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } 
+  }));
+
 
 // Login API
 router.post('/login', async (req, res) => {
@@ -32,6 +42,16 @@ router.post('/login', async (req, res) => {
         console.error('Error during login:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
+});
+
+//Log out API
+router.post('/logout', async(req, res) =>{
+    req.session.destroy((err) => {
+        if (err) {
+          return res.status(500).send({ message: 'Logout failed' });
+        }
+        res.status(200).send({ message: 'Logout successful' });
+      });
 });
 
 // Register API
@@ -118,6 +138,33 @@ router.post('/edit', async (req, res) =>
         res.status(500).json({ error: 'Error updating schedule.' });
     }
 
+});
+
+// Password reset API
+router.post('/passwordreset', async (req, res) => {
+    try
+    {
+        const { email } = req.body;
+        if ( !email ) return res.status(400).json({ error: 'Email is required.' });
+
+        const user = await User.find({ email });
+
+        if( user.length == 0 )
+        {
+            return res.status(404).json({ message: 'No email found.' });
+        }
+
+        const updatedPassword = await user.findOneAndUpdate(
+            { email: email },    // match scheduleId & userId
+            { $set: { schedule: newSchedule } },
+            { new: true }
+        );
+
+        res.status(200).json({ user });
+    } catch ( error )
+    {
+        res.status(500).json({ error: 'Error retrieving schedule.' });
+    }
 });
 
 module.exports = router;
