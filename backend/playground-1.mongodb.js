@@ -29,6 +29,57 @@ db.getCollection('Courses').insertMany([
 
 db.getCollection('Courses').find()    // verify that courses were inserted
 
+db.getCollection('Users').insertMany([
+  {
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "johndoe123@ucf.edu",
+    "password": "password",
+    "userId": "123",
+  },
+
+  {
+    "firstname": "Jane",
+    "lastname": "Smith",
+    "email": "jsmithh@gmail.com",
+    "password": "janesmith89",
+    "userId": "234",
+  },
+
+  {
+    "firstname": "Bob",
+    "lastname": "Smith",
+    "email": "bobsm1th@icloud.com",
+    "password": "bobsmith123",
+    "userId": "345",
+  },
+
+  {
+    "firstname": "Alice",
+    "lastname": "Johnson",
+    "email": "alicejohnson@yahoo.com",
+    "password": "al1ce.j0hns0n",
+    "userId": "456",
+  },
+
+  {
+    "firstname": "Michael",
+    "lastname": "Jordan",
+    "email": "ilovebasketball@gmail.com",
+    "password": "mjordan23",
+    "userId": "567",
+  },
+
+  {
+    "firstname": "Lebron",
+    "lastname": "James",
+    "email": "lebronjames@912@icloud.com",
+    "password": "ljames23",
+    "userId": "678",
+  }
+]);
+
+db.getCollection('Courses').find();
 
 // Schedules
 /*db.getCollection('schedules').insertMany([
