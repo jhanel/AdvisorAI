@@ -68,8 +68,8 @@ function Login()
                 onClick={doLogin} />
             <span id="loginResult">{message}</span>
             <br></br>
-            <span>Don't have an account ?
-                <Link to = "/register">Register</Link>
+            <span>Don't have an account?
+                <Link to = "/register"> Register</Link>
             </span>
         </div>
         

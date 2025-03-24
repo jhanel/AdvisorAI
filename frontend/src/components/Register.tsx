@@ -86,8 +86,8 @@ function Register()
                 onClick={doRegister} />
             <span id="registerResult">{message}</span>
             <br></br>
-            <span>Already have an account ?
-                <Link to = "/">Login</Link>
+            <span>Already have an account?
+                <Link to = "/"> Login</Link>
             </span>
         </div>
     );

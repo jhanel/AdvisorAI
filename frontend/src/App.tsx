@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage.tsx';
 import { Route, Routes } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage.tsx';
 import DashboardPage from './pages/DashboardPage.tsx';
+import ClassInput from './components/ClassInput.tsx';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path='/' element={<LoginPage />}/>
         <Route path='/register' element={<RegisterPage />}/>
         <Route path='/dashboard' element={<DashboardPage />}/>
+        <Route path='/input' element={<ClassInput />} />
       </Routes>
     </div>
   );
