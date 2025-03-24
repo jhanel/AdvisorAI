@@ -1,12 +1,10 @@
 import Dashboard from '../components/Dashboard.tsx';
 
-const DashboardPage = () =>
-{
-    return(
-    <div>
-        <Dashboard />
-    </div>
-    );
-};
 
-export default DashboardPage;
+export default function Home() {
+    return(
+        <div>
+            <Dashboard/>
+        </div>
+    )
+}
