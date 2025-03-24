@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Schedule = require('../models/schedule');
 const User = require('../models/User');
-const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
@@ -52,28 +51,30 @@ router.post('/logout', async(req, res) =>{
 // Register API
 
 router.post('/register', async (req, res) => {
+    
     const { firstname, lastname, email, password, userId } = req.body;
 
-    if ( !firstname || !lastname || !email || !password || !userId ) 
+    // checks for any missing fields when registering
+    if ( !firstname || !lastname || !email || !password || !userId ) // possibly remove userID ?
     {
         return res.status(400).json({ error: 'Missing required field(s).' });
     }
 
     try {
-        // check if email is already in use
-        const emails = await User.find({ email });
-        if (emails) {
+        // checks if an email is already in use
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.status(409).json({ message: 'Email already in use' });
         }
 
         // creating a new user
         const newUser = new User({ firstname, lastname, email, password, userId });
-        const registerUser = await newUser.save();
-        if (registerUser) {
-            res.status(201).json({ message: 'User registered successfully' });
-        }
+        await newUser.save();
+        res.status(201).json({ message: 'User registered successfully' });
+    
     }
     
+    // registration failed
     catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Registration failed' });

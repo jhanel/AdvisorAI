@@ -32,6 +32,40 @@ db.getCollection('Courses').find()    // verify that courses were inserted
 
 // Schedules
 /*db.getCollection('schedules').insertMany([
+
+function genName(length) {
+  let result = '';
+  const characters = 'abcdefghijklmnopqrstuvwxyz';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
+
+for (let i = 0; i < 2; i++) {
+  let fname = genName(5);
+  let lname = genName(10);
+  let em = genName(7) + "@email.com";
+  let pswd = genName(8);
+  let maxid = db.collection.find().sort({age:-1}).limit(1).toArray();
+  let userid = maxid.length > 0 ? parseInt(result[0].age) : 0;
+  db.getCollection('users').insertOne(
+    {
+      "firstname" : fname,
+      "lastname" : lname,
+      "email" : em,
+      "password" : pswd,
+      "userID" : userid + 1
+    }
+  )
+}
+
+/*
+db.getCollection('schedules').insertMany([
+
   {
     "userId": "12345",
     "schedule": [
@@ -59,6 +93,7 @@ db.getCollection('schedules').aggregate([
 
   { $group: { _id: "$schedule.subject", totalHours: { $sum: "$schedule.hours" } } }
 ]);
+*/
 
 /*
 // Insert a few documents into the sales collection.
