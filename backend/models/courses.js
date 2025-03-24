@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+/*const mongoose = require('mongoose');
 
 // Counter Schema for Auto-Increment 
 
@@ -85,4 +85,4 @@ CourseSchema.pre("save", async function (next)
 );
 
 const Course = mongoose.model("Course", CourseSchema);
-module.exports = Course;
+module.exports = Course;*/
