@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Schedule = require('../models/schedule');
-const User = require('../models/User');
+const User = require('../models/user'); //changed User to user
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-
 
 // Login API
 router.post('/login', async (req, res) => {
