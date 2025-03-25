@@ -64,7 +64,7 @@ router.post('/register', async (req, res) => {
         const emailToken = crypto.randomBytes(64).toString("hex");
 
         // creating a new user
-        const newUser = new User({ firstname, lastname, email, password: hashedPassword, userID, emailToken });
+        const newUser = new User({ firstname, lastname, email, password: hashedPassword, emailToken });
         await newUser.save();
 
         // calling the sendMail function to send the email and email token
