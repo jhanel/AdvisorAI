@@ -1,4 +1,4 @@
-const Course = require('./models/course.js');
+const Course = require('../models/course.js');
 
 exports.setApp = function (app) {
 

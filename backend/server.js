@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const api = require('./api.js');
+const api = require('./routes/courseRoutes.js');
 
 dotenv.config();
 
