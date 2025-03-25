@@ -7,7 +7,9 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     isVerifiedEmail: { type: Boolean, default: false },
     emailToken: { type: String, default: null },
-    userId: {type: Number, required: true, unique: true}
+    userId: {type: Number, required: true, unique: true},
+    resetPasswordToken: { type: String }, // Added for reset password 
+    resetPasswordExpires: { type: Date }
 });
 
 module.exports = mongoose.model('User', userSchema);

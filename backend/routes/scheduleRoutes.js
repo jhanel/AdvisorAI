@@ -5,6 +5,7 @@ const User = require('../models/user');
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const sendMail = require('./tokenSender');
+const nodemailer = require('nodemailer');
 
 // Login API
 router.post('/login', async (req, res) => {
@@ -17,7 +18,8 @@ router.post('/login', async (req, res) => {
             return res.status(404).json({ error: 'Invalid credentials' });
         }
 
-        if (userData.password !== password) {
+        const isMatch = await bcrypt.compare(password, userData.password);
+        if ( !isMatch) {
             return res.status(404).json({ error: 'Invalid credentials' });
         }
 
@@ -158,6 +160,79 @@ router.post('/edit', async (req, res) =>
         res.status(500).json({ error: 'Error updating schedule.' });
     }
 
+});
+
+// Sends email for password reset
+router.post('/passwordreset', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: 'Email is required.' });
+
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ error: 'No user found with that email.' });
+
+        // Generates a reset token
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = Date.now() + 3600000; // Expires in 1 hour
+        await user.save();
+
+        // Send reset password email
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        // Reset password page
+        const resetURL = `http://studentadvisorai.xyz/resetpassword?token=${resetToken}`;
+
+        // Email details
+        const mailOptions = {
+            to: user.email,
+            from: process.env.EMAIL_USER,
+            subject: 'Password Reset Request',
+            text: `Click the link to reset your password: ${resetURL}`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'Password reset email sent.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error processing password reset request.' });
+    }
+});
+
+
+// Changes the password
+router.post('/resetpassword', async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+        if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password are required.' });
+
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) return res.status(400).json({ error: 'Invalid or expired token.' });
+
+        // Hash new password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+
+        await user.save();
+
+        res.status(200).json({ message: 'Password reset successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error resetting password.' });
+    }
 });
 
 module.exports = router;
