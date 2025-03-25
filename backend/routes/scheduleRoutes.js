@@ -38,6 +38,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
+/*
 //Log out API
 router.post('/logout', async(req, res) =>{
     req.session.destroy((err) => {
@@ -47,6 +48,7 @@ router.post('/logout', async(req, res) =>{
         res.status(200).send({ message: 'Logout successful' });
       });
 });
+*/ 
 
 // Register API
 
@@ -136,7 +138,7 @@ router.post('/edit', async (req, res) =>
 
 });
 
-// Password reset API
+// Sends email for password reset
 router.post('/passwordreset', async (req, res) => {
     try {
         const { email } = req.body;
@@ -181,6 +183,7 @@ router.post('/passwordreset', async (req, res) => {
 });
 
 
+// Changes the password
 router.post('/resetpassword', async (req, res) => {
     try {
         const { token, newPassword } = req.body;
