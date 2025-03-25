@@ -1,50 +1,60 @@
-// load required modules
-const mongoose = require('mongoose');
-const Course = require('./models/course.js');  
-const token = require('./createJWT.js');
+const Course = require('./models/course.js');
 
 exports.setApp = function (app) {
 
-  app.post('/api/addcourse', async (req, res, next) => {
-    // incoming: userId, courseTitle, courseCode, difficulty, examDate, jwtToken
-    // outgoing: error, jwtToken
+  // Add Course API
+  app.post('/api/addcourse', async (req, res) => {
+    const { userId, courseTitle, difficulty, examDate } = req.body;
 
-    const { userId, courseTitle, courseCode, difficulty, examDate, jwtToken } = req.body;
-
-    try {
-      if (token.isExpired(jwtToken)) {
-        var r = { error: 'The JWT is no longer valid', jwtToken: '' };
-        res.status(200).json(r);
-        return;
-      }
-    } catch (e) {
-      console.log(e.message);
+    // Validate required fields
+    if (!userId || !courseTitle || !difficulty) {
+      return res.status(400).json({ error: 'Missing required field(s).' });
     }
 
+    // Validate difficulty
+    const allowedLevels = ["Easy", "Medium", "Hard", "Extremely Hard"];
+    if (!allowedLevels.includes(difficulty)) {
+      return res.status(400).json({
+        error: 'Invalid difficulty. Must be one of: Easy, Medium, Hard, Extremely Hard.'
+      });
+    }
+
+    // Create new course
     const newCourse = new Course({
       UserId: userId,
       CourseTitle: courseTitle,
-      CourseCode: courseCode,
       Difficulty: difficulty,
-      ExamDate: examDate
+      ExamDate: examDate ? new Date(examDate) : null
     });
-
-    var error = '';
 
     try {
       await newCourse.save();
+      res.status(200).json({ message: `Course ${courseTitle} added successfully!` });
     } catch (e) {
-      error = e.toString();
+      res.status(500).json({ error: e.toString() });
     }
-
-    var refreshedToken = null;
-    try {
-      refreshedToken = token.refresh(jwtToken);
-    } catch (e) {
-      console.log(e.message);
-    }
-
-    var ret = { error: error, jwtToken: refreshedToken };
-    res.status(200).json(ret);
   });
+
+  // Delete Course
+  app.delete('/api/deletecourse', async (req, res) => {
+    const { userId, courseTitle } = req.body;
+
+    // Validate input
+    if (!userId || !courseTitle) {
+      return res.status(400).json({ error: 'Missing userId or courseTitle.' });
+    }
+
+    try {
+      const result = await Course.deleteOne({ UserId: userId, CourseTitle: courseTitle });
+
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'Course not found.' });
+      }
+
+      return res.status(200).json({ message: `Course ${courseTitle} deleted.` });
+    } catch (e) {
+      return res.status(500).json({ error: e.toString() });
+    }
+  });
+
 };

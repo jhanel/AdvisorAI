@@ -10,18 +10,14 @@ const CourseSchema = new Schema({
     type: String,
     required: true
   },
-  CourseCode: {
-    type: String,
-    required: true
-  },
   Difficulty: {
-    type: Number, // 1-5
+    type: String,
+    enum: ["Easy", "Medium", "Hard", "Extremely Hard"],
     required: true
   },
   ExamDate: {
-    type: Date,
-    required: false
+    type: Date
   }
 });
 
-module.exports = Course = mongoose.model('Courses', CourseSchema);
+module.exports = mongoose.model('Courses', CourseSchema);
