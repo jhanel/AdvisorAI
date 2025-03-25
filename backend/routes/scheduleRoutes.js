@@ -38,18 +38,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-/*
-//Log out API
-router.post('/logout', async(req, res) =>{
-    req.session.destroy((err) => {
-        if (err) {
-          return res.status(500).send({ message: 'Logout failed' });
-        }
-        res.status(200).send({ message: 'Logout successful' });
-      });
-});
-*/ 
-
 // Register API
 
 router.post('/register', async (req, res) => {
