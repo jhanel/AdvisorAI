@@ -1,100 +1,50 @@
-// api.js
-
+// load required modules
 const mongoose = require('mongoose');
+const Course = require('./models/course.js');  
+const token = require('./createJWT.js');
 
-// 1. Define Course Schema (inline)
-const examSchema = new mongoose.Schema({
-  title: String,
-  date: String,
-  time: String,
-  countsAsStudyTime: {
-    type: Boolean,
-    default: true
-  }
-});
+exports.setApp = function (app) {
 
-const courseSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true
-  },
-  courseName: {
-    type: String,
-    required: true
-  },
-  exams: [examSchema]
-});
+  app.post('/api/addcourse', async (req, res, next) => {
+    // incoming: userId, courseTitle, courseCode, difficulty, examDate, jwtToken
+    // outgoing: error, jwtToken
 
-const Course = mongoose.model('Course', courseSchema);
+    const { userId, courseTitle, courseCode, difficulty, examDate, jwtToken } = req.body;
 
-// 2. Export function that attaches routes to `app`
-module.exports = function (app) {
-  // ✅ Test route
-  app.get('/api/test', (req, res) => {
-    res.status(200).json({ success: true, message: 'API is working!' });
-  });
-
-  // ✅ Add a course
-  app.post('/api/addcourse', async (req, res) => {
     try {
-      const { userId, courseName } = req.body;
-
-      if (!userId || !courseName) {
-        return res.status(400).json({ error: 'Missing userId or courseName' });
+      if (token.isExpired(jwtToken)) {
+        var r = { error: 'The JWT is no longer valid', jwtToken: '' };
+        res.status(200).json(r);
+        return;
       }
+    } catch (e) {
+      console.log(e.message);
+    }
 
-      const newCourse = new Course({
-        userId,
-        courseName,
-        exams: []
-      });
+    const newCourse = new Course({
+      UserId: userId,
+      CourseTitle: courseTitle,
+      CourseCode: courseCode,
+      Difficulty: difficulty,
+      ExamDate: examDate
+    });
 
+    var error = '';
+
+    try {
       await newCourse.save();
-      res.status(200).json({ success: true, course: newCourse });
-    } catch (err) {
-      console.error('Error in /addcourse:', err);
-      res.status(500).json({ error: err.message });
+    } catch (e) {
+      error = e.toString();
     }
-  });
 
-  // ✅ Add an exam to a course
-  app.post('/api/addexam', async (req, res) => {
+    var refreshedToken = null;
     try {
-      const { courseId, title, date, time, countsAsStudyTime } = req.body;
-
-      if (!courseId || !title || !date || !time) {
-        return res.status(400).json({ error: 'Missing required exam fields' });
-      }
-
-      const course = await Course.findById(courseId);
-      if (!course) {
-        return res.status(404).json({ error: 'Course not found' });
-      }
-
-      course.exams.push({
-        title,
-        date,
-        time,
-        countsAsStudyTime: countsAsStudyTime ?? true
-      });
-
-      await course.save();
-      res.status(200).json({ success: true, course });
-    } catch (err) {
-      console.error('Error in /addexam:', err);
-      res.status(500).json({ error: err.message });
+      refreshedToken = token.refresh(jwtToken);
+    } catch (e) {
+      console.log(e.message);
     }
-  });
 
-  // ✅ Get all courses for a user
-  app.get('/api/getcourses/:userId', async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const courses = await Course.find({ userId });
-      res.status(200).json({ success: true, courses });
-    } catch (err) {
-      console.error('Error in /getcourses:', err);
-      res.status(500).json({ error: err.message });
-    }
+    var ret = { error: error, jwtToken: refreshedToken };
+    res.status(200).json(ret);
   });
 };
