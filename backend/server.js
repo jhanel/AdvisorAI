@@ -14,7 +14,11 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.error("MongoDB Connection Error:", err));
 
 const scheduleRoutes = require('./routes/scheduleRoutes');
+const courseRoutes = require('./routes/courseRoutes');
+
 app.use('/api/schedule', scheduleRoutes);
+app.use('/api', courseRoutes);
+
 
 const PORT = process.env.PORT || 5002;
 
