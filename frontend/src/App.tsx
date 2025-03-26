@@ -7,6 +7,8 @@ import { Route, Routes } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage.tsx';
 import DashboardPage from './pages/DashboardPage.tsx';
 import CalendarPage from './pages/CalendarPage.tsx';
+import ForgotPassword from './pages/ForgotPasswordPage.tsx';
+
 
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
         <Route path='/register' element={<RegisterPage />}/>
         <Route path='/dashboard' element={<DashboardPage />}/>
         <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/forgot" element={<ForgotPassword />} />
+
       </Routes>
     </div>
   );

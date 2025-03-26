@@ -4,6 +4,33 @@
     padding: 2rem;
     text-align: center;
   }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+  
+    background-image: url('/background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+  
+    /* Optional dark overlay for readability */
+    position: relative;
+    color: white;
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* dark overlay */
+    z-index: -1;
+  }
+  
   
   .logo {
     height: 6em;
