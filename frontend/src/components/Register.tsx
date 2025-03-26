@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
+import "./ClassInputCSS.css";
+import FallingLeaves from "./FallingLeaves";
 
 const app_name = 'studentadvisorai.xyz';
 
@@ -77,6 +79,8 @@ function Register()
 
     return(
         <div id="registerDiv">
+            <FallingLeaves/>
+            <div className='background'></div>
             <span id="inner-title">PLEASE SIGN UP</span><br />
             <input type="text" id="registerFName" placeholder="First Name" onChange={handleSetRegisterFirstName}/><br />
             <input type="text" id="registerLName" placeholder="Last Name" onChange={handleSetRegisterLastName}/><br />

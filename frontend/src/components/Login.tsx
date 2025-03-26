@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 //require('dotenv').config({ path: './.env' });
+import "./ClassInputCSS.css";
+import FallingLeaves from "./FallingLeaves";
 
 const app_name = 'studentadvisorai.xyz';
 
@@ -61,6 +63,8 @@ function Login()
 
     return(
         <div id="loginDiv">
+            <FallingLeaves/>
+            <div className='background'></div>
             <span id="inner-title">PLEASE LOG IN</span><br />
             <input type="text" id="loginName" placeholder="Email" onChange={handleSetLoginName}/><br />
             <input type="password" id="loginPassword" placeholder="Password" onChange={handleSetPassword} /><br />
