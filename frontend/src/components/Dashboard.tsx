@@ -7,19 +7,16 @@ import LogoutButton from './LogoutButton';
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // State for availability input, course count, and course details
   const [availability, setAvailability] = useState('');
   const [numCourses, setNumCourses] = useState(0);
   const [courses, setCourses] = useState([]);
 
-  // Handles updates to each course's field (name, difficulty, etc.)
   const handleCourseChange = (index, field, value) => {
     const updated = [...courses];
     updated[index] = { ...updated[index], [field]: value };
     setCourses(updated);
   };
 
-  // Stores schedule data and navigates to calendar
   const handleGenerateSchedule = () => {
     const scheduleInputData = {
       availability,
@@ -31,15 +28,21 @@ export default function Dashboard() {
     navigate('/calendar');
   };
 
+  const availabilityOptions = [
+    'Anytime',
+    'Mornings',
+    'Evenings',
+    'Weekdays',
+  ];
+
   return (
-    // Centered frosted glass container over background
     <div
       style={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        padding: '40px 20px',
+        padding: '40px 20px'
       }}
     >
       <div
@@ -51,29 +54,25 @@ export default function Dashboard() {
           borderRadius: '12px',
           border: '1px solid rgba(255, 255, 255, 0.2)',
           maxWidth: '600px',
-          width: '100%',
+          width: '100%'
         }}
       >
-        {/* Title and Logout */}
         <div style={{ textAlign: 'center', marginBottom: '10px', textShadow: '1px 1px 4px black' }}>
           <h1>Advisor AI</h1>
         </div>
         <LogoutButton styleOverride={{ top: '5px', right: '-300px' }} />
 
-        {/* Subtitle */}
         <div style={{ textAlign: 'center', marginBottom: '30px', textShadow: '1px 1px 4px black' }}>
           <h2><span role="img" aria-label="brain">🧠</span> Schedule Generator</h2>
         </div>
 
-        {/* Availability input */}
         <div style={{ marginBottom: '25px' }}>
           <label style={{ display: 'block', marginBottom: '8px', textShadow: '1px 1px 4px black' }}>
             What is your availability?
           </label>
-          <textarea
+          <select
             value={availability}
             onChange={(e) => setAvailability(e.target.value)}
-            placeholder="Ex: Weekdays after 4PM, weekends anytime"
             style={{
               width: '100%',
               padding: '10px',
@@ -83,10 +82,14 @@ export default function Dashboard() {
               border: '1px solid #444',
               boxSizing: 'border-box'
             }}
-          />
+          >
+            <option value="" disabled>Select your availability</option>
+            {availabilityOptions.map((option) => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
         </div>
 
-        {/* Number of courses input */}
         <div style={{ marginBottom: '25px' }}>
           <label style={{ display: 'block', marginBottom: '8px', textShadow: '1px 1px 4px black' }}>
             How many courses are you taking?
@@ -112,7 +115,6 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Render dynamic course inputs */}
         {courses.map((course, index) => (
           <div key={index} style={{
             border: '1px solid #444',
@@ -122,8 +124,6 @@ export default function Dashboard() {
             backgroundColor: '#1a1a1a'
           }}>
             <h4 style={{ textShadow: '1px 1px 4px black' }}>Course {index + 1}</h4>
-
-            {/* Course name */}
             <input
               type="text"
               placeholder="Course Name"
@@ -131,8 +131,6 @@ export default function Dashboard() {
               onChange={(e) => handleCourseChange(index, 'name', e.target.value)}
               style={{ width: '100%', padding: '8px', marginBottom: '10px', boxSizing: 'border-box' }}
             />
-
-            {/* Course difficulty */}
             <input
               type="number"
               min="1"
@@ -143,7 +141,6 @@ export default function Dashboard() {
               style={{ width: '100%', padding: '8px', marginBottom: '10px', boxSizing: 'border-box' }}
             />
 
-            {/* Exam checkbox and due date */}
             <div style={{ marginBottom: '10px' }}>
               <label style={{ textShadow: '1px 1px 4px black' }}>
                 <input
@@ -173,7 +170,6 @@ export default function Dashboard() {
           </div>
         ))}
 
-        {/* Generate schedule button */}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <button
             onClick={handleGenerateSchedule}
