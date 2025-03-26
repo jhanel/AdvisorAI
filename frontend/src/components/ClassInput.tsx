@@ -3,6 +3,11 @@ import { Dropdown } from 'primereact/dropdown';
 import {DayPilot, DayPilotCalendar} from "@daypilot/daypilot-lite-react";
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primereact/resources/primereact.css";
+import "./ClassInputCSS.css";
+import FallingLeaves from "./FallingLeaves";
 
 
 
@@ -56,7 +61,7 @@ function ClassInput(){
                 end: args.end,
                 id: DayPilot.guid(),
                 text: "Available",
-                backColor: 'lightblue'
+                backColor: '#009da8',
             });
         };
     
@@ -124,7 +129,10 @@ function ClassInput(){
     };
 
     return (
-        <div className="Class-input">
+        <div className="class-input-container">
+            <div className = "background" ></div>
+            <FallingLeaves />
+            <h2 className = "title"> Available Schedule</h2>
                         <DayPilotCalendar
                             {...config}
                             onTimeRangeSelected={onTimeRangeSelected}
@@ -133,28 +141,30 @@ function ClassInput(){
                             controlRef={setCalendar}
                         />
                         <br /><br />
-            <text>How many classes are you taking? &nbsp;</text>
-            <Dropdown value={selectedClassNum} onChange={(e) => setSelectedClassNum(e.value)} options={numClasses} optionLabel="name" placeholder="Select Number of Classes" className="w-full md:w-14rem" panelStyle={{backgroundColor: 'white' }}/>
+            <label>How many classes are you taking? &nbsp;</label>
+            <Dropdown value={selectedClassNum} onChange={(e) => setSelectedClassNum(e.value)} options={numClasses} optionLabel="name" placeholder="Select Number of Classes" className="custom-dropdown" panelStyle={{backgroundColor: 'white' }}/>
             <br /><br />
             {courses.map((courses, index) => (
                 <div key={index}>
                     <span>Course Name: &nbsp;</span>
-                    <InputText value={courses} onChange={(e) => newCourse(index, e.target.value)} placeholder= "Enter Course" />
+                    <InputText value={courses} onChange={(e) => newCourse(index, e.target.value)} placeholder= "Enter Course" className = "custom-input" />
                     &nbsp; Difficulty: &nbsp;
-                    <Dropdown value={difficulty[index]} onChange = {(e) => newDifficulty(index, e.value)} options={difficultyLevels} optionLabel="name" placeholder="Select Difficulty" className="w-full md:w-10rem" panelStyle={{backgroundColor: 'white' }}/>
+                    <Dropdown value={difficulty[index]} onChange = {(e) => newDifficulty(index, e.value)} options={difficultyLevels} optionLabel="name" placeholder="Select Difficulty" className="custom-dropdown" panelStyle={{backgroundColor: 'white' }}/>
                     <br /><br />
+                    <div className="exam-container">
                     <span>Exam Dates for {courses}: </span>
                     {exams[index]?.map((exams, examIndex) =>(
                         <div key={examIndex}>
-                            <InputText value={exams} onChange={(e) => newExam(index, examIndex, e.target.value)} placeholder={`Exam ${examIndex + 1} Date`} />
+                            <InputText value={exams} onChange={(e) => newExam(index, examIndex, e.target.value)} placeholder={`Exam ${examIndex + 1} Date`} className="custom-input"/>
                             </div>
                     ))}
-                    <Button label="Add New Exam" onClick={() => addExam(index)} className ='p-button-sm p-button-outlined' />
+                    <Button label="Add New Exam" onClick={() => addExam(index)} className ='custom-button' />
                     <br /><br />
+                    </div>
                     </div>
             ))}
             <br /><br />
-            <Button label="Generate Schedule" onClick={genSchedule} className="p-button-sm p-button-primary" />
+            <Button label="Generate Schedule" onClick={genSchedule} className="custom-button primary" />
         </div>
     )
 

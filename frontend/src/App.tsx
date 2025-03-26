@@ -11,7 +11,7 @@ import ClassInput from './components/ClassInput.tsx';
 function App() {
   return (
     <div className="App">
-      <h1>Advisor AI app</h1>
+      <h1>Advisor AI</h1>
       <Routes>
         <Route path='/' element={<LoginPage />}/>
         <Route path='/register' element={<RegisterPage />}/>

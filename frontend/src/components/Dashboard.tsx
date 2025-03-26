@@ -2,6 +2,9 @@
 
 import React, {useEffect, useState} from "react";
 import {DayPilot, DayPilotCalendar} from "@daypilot/daypilot-lite-react";
+//import "./DashboardCSS.css";
+import FallingLeaves from "./FallingLeaves";
+import { Link } from 'react-router-dom';
 
 export default function Calendar() {
 
@@ -37,6 +40,10 @@ export default function Calendar() {
     ];
 
     const [calendar, setCalendar] = useState<DayPilot.Calendar>();
+    const [startDate, setStartDate] = useState<string>(() => {
+        const today = new Date();
+        return today.toISOString().split('T')[0];
+    });
 
     const editEvent = async (e: DayPilot.Event) => {
         const form = [
@@ -95,13 +102,13 @@ export default function Calendar() {
             args.data.areas.push({
                 bottom: 5,
                 left: 5,
-                width: 24,
-                height: 24,
+                right: 5,
+                height: 18,
                 action: "None",
                 backColor: "#00000033",
                 fontColor: "#fff",
                 text: urgency,
-                style: "border-radius: 50%; border: 2px solid #fff; font-size: 18px; text-align: center;",
+                style: "text-align: center; font-size: 16px; line-height: 18px; overflow: hidden; text-overflow: ellipsis; cursor: default;",
             });
         }
     };
@@ -109,6 +116,7 @@ export default function Calendar() {
     const initialConfig: DayPilot.CalendarConfig = {
         viewType: "Week",
         durationBarVisible: false,
+        startDate: startDate,
     };
 
     const [config, setConfig] = useState(initialConfig);
@@ -120,9 +128,8 @@ export default function Calendar() {
         }
         
 
-        const startDate = "2025-10-01";
-
-    }, [calendar]);
+        calendar.update(config);
+    }, [calendar, startDate]);
 
     const onTimeRangeSelected = async (args: DayPilot.CalendarTimeRangeSelectedArgs) => {
         const modal = await DayPilot.Modal.prompt("Create a new assignment:", "Ex: 'Math Exam'");
@@ -142,22 +149,39 @@ export default function Calendar() {
         });
     };
 
-    function doLogout(event:any) : void
-    {
-        event.preventDefault();
-        alert('doLogout');
-    };
 
-    function doNextWeek(event:any) : void
-    {
+    function doNextWeek(event: any): void {
         event.preventDefault();
-        alert('doNextWeek');
-    };
+        const nextWeek = new Date(startDate);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        const newStartDate = nextWeek.toISOString().split('T')[0];
+        setStartDate(newStartDate);
+        setConfig(prevConfig => ({
+            ...prevConfig,
+            startDate: newStartDate,
+        }));
+    }
+
+    function doPreviousWeek(event: any): void {
+        event.preventDefault();
+        const previousWeek = new Date(startDate);
+        previousWeek.setDate(previousWeek.getDate() - 7);
+        const newStartDate = previousWeek.toISOString().split('T')[0];
+        setStartDate(newStartDate);
+        setConfig(prevConfig => ({
+            ...prevConfig,
+            startDate: newStartDate,
+        }));
+    }
+
 
     return (
         <div>
             <br />
-        <button type="button" id="logoutButton" className="buttons" onClick={doNextWeek}> Next </button>
+            <div className = "background" ></div>
+            <FallingLeaves />
+            <button type="button" className="custom-button" onClick={doPreviousWeek}> Previous </button> &emsp;
+            <button type="button" className="custom-button" onClick={doNextWeek}> Next </button>
         <br />
         <br />
             <DayPilotCalendar
@@ -169,7 +193,8 @@ export default function Calendar() {
                 controlRef={setCalendar}
             />
             <br />
-        <button type="button" id="logoutButton" className="buttons" onClick={doLogout}> Log Out </button>
+            <Link to = "/">
+        <button type="button" id="logoutButton" className="custom-button"> Log Out </button></Link>
         </div>
     )
 }
