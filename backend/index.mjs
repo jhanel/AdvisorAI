@@ -24,7 +24,7 @@ async function generateStudySchedule(userInput) {
 
     ### Inputs:
     - Courses: ${JSON.stringify(userInput.courses)}
-    - Difficulty (1-5): ${JSON.stringify(userInput.difficulty)}
+    - Difficulty (1-4): ${JSON.stringify(userInput.difficulty)}
     - Exams (yes or no): ${JSON.stringify(userInput.exams)}
     - Exam Dates: ${JSON.stringify(userInput.examDates)}
     - Availability: ${JSON.stringify(userInput.availability)}
