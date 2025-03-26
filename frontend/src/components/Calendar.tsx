@@ -7,39 +7,41 @@ import jsPDF from 'jspdf';
 
 export default function Calendar() {
   const [calendar, setCalendar] = useState(null);
+  const initialStartDate = DayPilot.Date.today().firstDayOfWeek();
+  const [startDate, setStartDate] = useState(initialStartDate);
+  const [showPrev, setShowPrev] = useState(false);
   const [config] = useState({
     viewType: 'Week',
     durationBarVisible: false,
   });
 
-  // Load schedule data from localStorage and create events on the calendar
   useEffect(() => {
     const data = localStorage.getItem('scheduleData');
     if (!data) return;
 
     const { courses } = JSON.parse(data);
-    const startOfWeek = DayPilot.Date.today().firstDayOfWeek();
 
     const events = courses.map((course, index) => {
       const dayOffset = index % 7;
-      const start = startOfWeek.addDays(dayOffset).addHours(15); // 3PM
-      const end = start.addHours(1); // 1 hour session
+      const start = startDate.addDays(dayOffset).addHours(15);
+      const end = start.addHours(1);
 
       return {
         start,
         end,
         id: DayPilot.guid(),
-        text: `${course.name} - ${course.exam ? 'Exam' : 'Study'}`,
-        backColor: course.exam ? '#cc4125' : '#56c5ff',
+        text: `${course.name} - Exam`,
+        backColor: '#cc4125',
       };
     });
 
     if (calendar) {
-      calendar.update({ events });
+      calendar.update({ startDate, events });
     }
-  }, [calendar]);
 
-  // Export the current schedule as a PDF file
+    setShowPrev(startDate > initialStartDate);
+  }, [calendar, startDate]);
+
   const handleExportPDF = () => {
     const data = localStorage.getItem('scheduleData');
     if (!data) return;
@@ -54,11 +56,9 @@ export default function Calendar() {
 
     courses.forEach((course, index) => {
       const y = 40 + index * 20;
-      const taskType = course.exam ? 'Exam' : 'Study';
       const due = course.dueDates?.exam || 'N/A';
-
       doc.text(
-        `• ${course.name} - ${taskType} | Difficulty: ${course.difficulty} | Due: ${due}`,
+        `• ${course.name} - Exam | Difficulty: ${course.difficulty} | Due: ${due}`,
         20,
         y
       );
@@ -67,9 +67,19 @@ export default function Calendar() {
     doc.save('study_schedule.pdf');
   };
 
+  const navButtonStyle = {
+    width: '150px',
+    padding: '10px 20px',
+    backgroundColor: '#6c757d',
+    color: 'white',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    textAlign: 'center'
+  };
+
   return (
     <div style={{ padding: '40px', minHeight: '100vh', color: 'white', position: 'relative' }}>
-      {/* Back to Dashboard Button */}
       <button
         style={{
           position: 'absolute',
@@ -87,18 +97,38 @@ export default function Calendar() {
         ← Back to Dashboard
       </button>
 
-      {/* Logout Button */}
       <LogoutButton styleOverride={{ top: '20px', right: '20px' }} />
 
-      {/* Page Title */}
       <h2 style={{ textAlign: 'center', marginBottom: '20px', textShadow: '1px 1px 4px black' }}>
         🧠 Your Generated Schedule
       </h2>
 
-      {/* Calendar View */}
-      <DayPilotCalendar {...config} controlRef={setCalendar} />
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
+        {showPrev && (
+          <button
+            onClick={() => {
+              const prevWeek = startDate.addDays(-7);
+              setStartDate(prevWeek);
+            }}
+            style={navButtonStyle}
+          >
+            ⏮️ Prev
+          </button>
+        )}
 
-      {/* Export Button */}
+        <button
+          onClick={() => {
+            const nextWeek = startDate.addDays(7);
+            setStartDate(nextWeek);
+          }}
+          style={navButtonStyle}
+        >
+            Next ⏭️
+        </button>
+      </div>
+
+      <DayPilotCalendar {...config} startDate={startDate} controlRef={setCalendar} />
+
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
         <button
           onClick={handleExportPDF}
