@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Schedule = require('../models/schedule');
 const User = require('../models/user');
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
