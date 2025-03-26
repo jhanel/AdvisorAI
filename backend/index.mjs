@@ -1,6 +1,10 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 
+// How to run:
+// 1.switch to backend folder
+// 2. run node index.mjs
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -10,51 +14,81 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 // Function to generate a study schedule
 async function generateStudySchedule(userInput) {
   try {
-    // Use the correct Gemini model here, e.g., 'gemini-2' or whichever is correct
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });  // Update with the correct Gemini model
-
-    const prompt = `I need a study schedule in JSON format for a week.
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     
-    ### Rules:
-    - **Each day appears only ONCE** in the JSON output.
-    - **Study sessions must strictly follow availability**. Do not schedule outside of available hours.
-    - **No duplicate keys** (e.g., "Saturday" should appear only once).
-    - **No time overlaps or incorrect formatting**.
-    - **Use 24-hour military time format (e.g., "14:00-16:00"). Do not include AM/PM.**
+    //Prompt for AI
+    const prompt = `Generate a JSON-formatted weekly study schedule.
 
-    ### Inputs:
-    - Courses: ${JSON.stringify(userInput.courses)}
-    - Difficulty (1-4): ${JSON.stringify(userInput.difficulty)}
-    - Exams (yes or no): ${JSON.stringify(userInput.exams)}
-    - Exam Dates: ${JSON.stringify(userInput.examDates)}
-    - Availability: ${JSON.stringify(userInput.availability)}
+### **Rules**
+- **Each day must appear only ONCE.**
+- **Only schedule study sessions within the given availability.**
+- **Use start_time and end_time format like in the input.**
+- **No time overlaps. No exceeding availability slots.**
+- **More study time for harder subjects. Less for easier subjects.**
+- **Format times in 24-hour military format (e.g., "14:00-16:00").**
 
-    ### Output:
-    - Return only valid JSON with days and study sessions.
-    - No explanations. No additional text.
-    `;
+### **Inputs**
+- Courses: ${JSON.stringify(userInput.courses)}
+- Difficulty: ${JSON.stringify(userInput.difficulty)}
+- Exams: ${JSON.stringify(userInput.exams)}
+- Exam Dates: ${JSON.stringify(userInput.examDates)}
+- Availability: ${JSON.stringify(userInput.availability)}
 
+### **Output**
+- Return **ONLY** valid JSON. No extra text or explanations.
+- The JSON format must be:
+\`\`\`json
+{
+  "Monday": [
+    { "start_time": "09:00", "end_time": "11:00", "course": "Math" },
+    { "start_time": "14:00", "end_time": "16:00", "course": "Physics" }
+  ],
+  "Tuesday": [...],
+  ...
+}
+\`\`\`
+`;
 
     const result = await model.generateContent(prompt);
     const textResponse = result.response.candidates[0].content.parts[0].text;
 
-    // Extract JSON from response
+    // Extract JSON from AI response
     const jsonMatch = textResponse.match(/```json([\s\S]*?)```/);
     const jsonData = jsonMatch ? jsonMatch[1].trim() : textResponse.trim();
 
     return JSON.parse(jsonData);
-
-  } catch (error) {
+  } 
+  catch (error) {
     console.error("Error generating study schedule:", error);
     return { error: "Failed to generate study schedule." };
   }
 }
 
-// Example usage:
+// Function makes sure that schedule is within availbilty and has no duplicates
+function validateSchedule(schedule, availability) {
+  let validatedSchedule = {};
+
+  for (const [day, sessions] of Object.entries(schedule)) {
+    if (!availability[day]) continue; // Skip days with no availability
+
+    validatedSchedule[day] = sessions.filter(session => {
+      return availability[day].some(avail => {
+        return (
+          session.start_time >= avail.start_time &&
+          session.end_time <= avail.end_time
+        );
+      });
+    });
+  }
+
+  return validatedSchedule;
+}
+
+// User Input example
 const userInput = {
   courses: ["Math", "Physics", "History", "Biology"],
-  difficulty: { Math: 4, Physics: 5, History:2, Biology: 3},
-  exams: { Math: "yes", Physics: "yes", History: "yes", Biology: "no"},
+  difficulty: { Math: "hard", Physics: "extremely hard", History: "easy", Biology: "medium" },
+  exams: { Math: "yes", Physics: "yes", History: "yes", Biology: "no" },
   availability: {
     Monday: [
       { start_time: "09:00", end_time: "11:00" },
@@ -76,9 +110,10 @@ const userInput = {
       { start_time: "11:00", end_time: "13:00" },
       { start_time: "16:00", end_time: "20:00" }
     ]
-  }  
+  }
 };
 
 generateStudySchedule(userInput).then((schedule) => {
-  console.log("Generated Study Schedule:", JSON.stringify(schedule, null, 2));
+  const validatedSchedule = validateSchedule(schedule, userInput.availability);
+  console.log("Final Study Schedule:", JSON.stringify(validatedSchedule, null, 2));
 });
