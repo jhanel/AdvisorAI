@@ -9,25 +9,37 @@ export default function Calendar() {
   const [calendar, setCalendar] = useState(null);
   const [startDate, setStartDate] = useState(DayPilot.Date.today().firstDayOfWeek());
   const [showPrev, setShowPrev] = useState(false);
-  const [events, setEvents] = useState([]);
 
+  // Configuration for the calendar view
   const [config] = useState({
     viewType: 'Week',
     durationBarVisible: false,
   });
 
+  // Determine start hour based on availability
   const generateStartHour = (availability, fallbackHour) => {
     switch (availability) {
-      case 'Mornings (before 2PM)': return 9;
-      case 'Evenings (after 5PM)': return 18;
-      case 'Weekdays': return fallbackHour;
+      case 'Mornings (before 2PM)':
+        return 9;
+      case 'Evenings (after 5PM)':
+        return 18;
+      case 'Weekdays':
+        return fallbackHour;
       case 'Anytime':
-      default: return fallbackHour;
+      default:
+        return fallbackHour;
     }
   };
 
+  // Handle editing a calendar event (study session)
   const editEvent = async (e) => {
     const form = [
+      {
+        name: 'Edit Study Session',
+        id: 'header',
+        type: 'html',
+        html: '<h2 style="text-align:center; margin-top:0; color:black; text-shadow:1px 1px 2px gray;">Edit Study Session</h2>'
+      },
       { name: 'Event text', id: 'text', type: 'text' },
       {
         name: 'Color',
@@ -36,9 +48,10 @@ export default function Calendar() {
         options: [
           { name: 'Blue', id: '#56c5ff' },
           { name: 'Green', id: '#6aa84f' },
+          { name: 'Red', id: '#cc4125' },
           { name: 'Purple', id: '#af8ee5' },
-          { name: 'Orange', id: '#e69138' },
-        ]
+        ],
+        placeholder: "Ex: 'Blue'"
       }
     ];
 
@@ -48,26 +61,28 @@ export default function Calendar() {
     e.data.text = modal.result.text;
     e.data.backColor = modal.result.backColor;
     calendar?.events.update(e);
-    setEvents(calendar.events.list); // update event state
   };
 
+  // Context menu (right-click) options
   const contextMenu = new DayPilot.Menu({
     items: [
       {
         text: 'Delete',
         onClick: async (args) => {
           calendar?.events.remove(args.source);
-          setEvents(calendar.events.list); // update event state
         },
       },
       { text: '-' },
       {
         text: 'Edit...',
-        onClick: async (args) => { await editEvent(args.source); },
+        onClick: async (args) => {
+          await editEvent(args.source);
+        },
       },
     ],
   });
 
+  // Event render customization
   const onBeforeEventRender = (args) => {
     args.data.areas = [
       {
@@ -85,12 +100,13 @@ export default function Calendar() {
     ];
   };
 
+  // Update calendar when component mounts or week changes
   useEffect(() => {
     const data = localStorage.getItem('scheduleData');
     if (!data) return;
     const { availability, courses } = JSON.parse(data);
 
-    const generatedEvents = courses.map((course, index) => {
+    const events = courses.map((course, index) => {
       const fallbackHour = 15;
       const hour = generateStartHour(availability, fallbackHour);
       const dayOffset = index % 5;
@@ -107,22 +123,25 @@ export default function Calendar() {
     });
 
     if (calendar) {
-      calendar.update({ startDate, events: generatedEvents });
+      calendar.update({ startDate, events });
     }
 
-    setEvents(generatedEvents);
     setShowPrev(startDate > DayPilot.Date.today().firstDayOfWeek());
   }, [calendar, startDate]);
 
+  // Export calendar to PDF
   const handleExportPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
     doc.text('Your Study Schedule', 20, 20);
 
-    events.forEach((event, index) => {
-      const y = 30 + index * 10;
+    const events = calendar?.events.list || [];
+    let y = 30;
+    events.forEach((event) => {
+      const text = `• ${event.data.text} | ${event.data.start.toString("dddd M/d h:mm tt")} - ${event.data.end.toString("h:mm tt")}`;
       doc.setFontSize(12);
-      doc.text(`• ${event.text} | ${event.start.toString()} - ${event.end.toString()}`, 20, y);
+      doc.text(text, 20, y);
+      y += 10;
     });
 
     doc.save('study_schedule.pdf');
@@ -141,6 +160,7 @@ export default function Calendar() {
 
   return (
     <div style={{ padding: '40px', minHeight: '100vh', color: 'white', position: 'relative' }}>
+      {/* Navigation and Logout */}
       <button
         style={{
           position: 'absolute',
@@ -160,10 +180,12 @@ export default function Calendar() {
 
       <LogoutButton styleOverride={{ top: '20px', right: '20px' }} />
 
+      {/* Title */}
       <h2 style={{ textAlign: 'center', marginBottom: '20px', textShadow: '1px 1px 4px black' }}>
         🧠 Your Generated Schedule
       </h2>
 
+      {/* Week navigation buttons */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
         {showPrev && (
           <button
@@ -182,6 +204,7 @@ export default function Calendar() {
         </button>
       </div>
 
+      {/* Calendar UI */}
       <DayPilotCalendar
         {...config}
         startDate={startDate}
@@ -192,15 +215,12 @@ export default function Calendar() {
           const modal = await DayPilot.Modal.prompt("Create a new study block:", "Ex: 'Math Review'");
           calendar?.clearSelection();
           if (modal.canceled) return;
-          const newEvent = {
+          calendar?.events.add({
             start: args.start,
             end: args.end,
             id: DayPilot.guid(),
             text: modal.result,
-            backColor: '#56c5ff'
-          };
-          calendar?.events.add(newEvent);
-          setEvents(calendar.events.list);
+          });
         }}
         onEventClick={async (args) => {
           await editEvent(args.e);
@@ -209,16 +229,15 @@ export default function Calendar() {
           args.e.data.start = args.newStart;
           args.e.data.end = args.newEnd;
           calendar.events.update(args.e);
-          setEvents(calendar.events.list);
         }}
         onEventResize={(args) => {
           args.e.data.start = args.newStart;
           args.e.data.end = args.newEnd;
           calendar.events.update(args.e);
-          setEvents(calendar.events.list);
         }}
       />
 
+      {/* Export Button */}
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
         <button
           onClick={handleExportPDF}
