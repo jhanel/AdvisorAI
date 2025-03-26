@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
-<<<<<<< HEAD
 const User = require('../models/user');
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const sendMail = require('./tokenSender');
 const nodemailer = require('nodemailer');
-=======
-const User = require('../models/user'); //changed User to user
->>>>>>> 8972bd4c77891335f6092b736d3bde7243d78256
+
 
 // Login API
 router.post('/login', async (req, res) => {
@@ -86,7 +83,6 @@ router.post('/register', async (req, res) => {
 
 });
 
-<<<<<<< HEAD
 // Verify Email API
 
 router.patch("/verifyemail", async (req, res) => {
@@ -184,6 +180,3 @@ router.post('/resetpassword', async (req, res) => {
 });
 
 module.exports = router;
-=======
-module.exports = router;
->>>>>>> 8972bd4c77891335f6092b736d3bde7243d78256
