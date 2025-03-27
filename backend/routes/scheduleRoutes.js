@@ -27,7 +27,7 @@ router.post('/login', async (req, res) => {
         const { userID, firstname, lastname } = userData;
 
         res.status(200).json({
-            id: userID,
+            userID: savedUser._id.toString(),
             firstname: firstname,
             lastname: lastname,
             error: ''
@@ -77,7 +77,6 @@ router.post('/register', async (req, res) => {
 
         //await sendMail(email, emailToken);
         // Respond with userID
-        //res.status(201).json({ message: 'User registered successfully', userID: savedUser.userID });
         res.status(200).json({
             userID: savedUser._id.toString(),
             firstname: firstname,
