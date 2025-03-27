@@ -12,24 +12,27 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        // Find the user by email
         const userData = await User.findOne({ email: email });
 
         if (!userData) {
             return res.status(404).json({ error: 'Invalid credentials' });
         }
 
+        // Compare the provided password with the hashed password
         const isMatch = await bcrypt.compare(password, userData.password);
-        if ( !isMatch) {
+        if (!isMatch) {
             return res.status(404).json({ error: 'Invalid credentials' });
         }
 
-        // If the password matches, return user info
-       // const { userID, firstname, lastname } = userData;
+        // If the password matches, return the user information
+        const { firstname, lastname } = userData;
 
         res.status(200).json({
-            userID: userData._id,
+            userID: userData._id.toString(),
             firstname: firstname,
             lastname: lastname,
+            email: userData.email,
             error: ''
         });
 
@@ -38,6 +41,7 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 // Register API
 
