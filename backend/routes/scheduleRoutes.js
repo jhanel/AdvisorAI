@@ -45,10 +45,20 @@ router.post('/register', async (req, res) => {
     
     const { firstname, lastname, email, password} = req.body;
 
+    
     // checks for any missing fields when registering
     if ( !firstname || !lastname || !email || !password)
     {
         return res.status(400).json({ error: 'Missing required field(s).' });
+    }
+
+    // password requirements / complexity
+    if (password.length < 8) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
+    }
+
+    if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
+        return res.status(400).json({ error: 'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.' });
     }
 
     try {
