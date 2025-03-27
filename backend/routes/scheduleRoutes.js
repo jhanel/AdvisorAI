@@ -91,7 +91,7 @@ router.post('/register', async (req, res) => {
         await newUser.save();
 
         // calling the sendMail function to send the email and email token
-        await sendMail(email, emailToken);
+        // await sendMail(email, emailToken);
         res.status(201).json({ message: 'User registered successfully' });
     
     }
