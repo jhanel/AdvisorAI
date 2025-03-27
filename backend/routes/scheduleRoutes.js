@@ -79,7 +79,7 @@ router.post('/register', async (req, res) => {
         // Respond with userID
         //res.status(201).json({ message: 'User registered successfully', userID: savedUser.userID });
         res.status(200).json({
-            id: userID,
+            id: savedUser.userID,
             firstname: firstname,
             lastname: lastname,
             email: email,
