@@ -1,21 +1,25 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const CourseSchema = new Schema({
+const ExamSchema = new Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Reference to the User model
     required: true
   },
-  courseTitle: {
+  courseId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course', // Reference to the Course model
+    required: true
+  },
+  examName: {
     type: String,
     required: true
   },
-  difficulty: {
-    type: String,
-    enum: ["Easy", "Medium", "Hard", "Extremely Hard"],
+  examDate: {
+    type: Date,
     required: true
   }
 });
 
-module.exports = mongoose.model('Course', CourseSchema);
+module.exports = mongoose.model('Exam', ExamSchema);

@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const Schedule = require('../models/schedule');
 const User = require('../models/user');
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
-const sendMail = require('./tokenSender');
 
 // Login API
 router.post('/login', async (req, res) => {
