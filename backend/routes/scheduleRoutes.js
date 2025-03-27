@@ -42,66 +42,47 @@ router.post('/login', async (req, res) => {
 // Register API
 
 router.post('/register', async (req, res) => {
-    
-    const { firstname, lastname, email, password} = req.body;
-    
-    // checks for any missing fields when registering
-    if ( !firstname || !lastname || !email || !password)
-    {
+    const { firstname, lastname, email, password } = req.body;
+
+    // Validate required fields
+    if (!firstname || !lastname || !email || !password) {
         return res.status(400).json({ error: 'Missing required field(s).' });
     }
 
-    // password requirements / complexity
+    // Password complexity checks
     if (password.length < 8) {
         return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
     }
-
-    if (!/[a-z]/.test(password)) {
-        return res.status(400).json({ error: 'Password must contain at least one lowercase letter.' });
-    }
-
-    if (!/[A-Z]/.test(password)) {
-        return res.status(400).json({ error: 'Password must contain at least one uppercase letter.' });
-    }
-
-    if (!/\d/.test(password)) {
-        return res.status(400).json({ error: 'Password must contain at least one number.' });
-    }
-
-    if (!/[@$!%*?&]/.test(password)) {
-        return res.status(400).json({ error: 'Password must contain at least one special character (@$!%*?&).' });
+    if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password) || !/[@$!%*?&]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&).' });
     }
 
     try {
-        // checks if an email is already in use
+        // Check if email already exists
         const existingUser = await User.findOne({ email });
-
         if (existingUser) {
             return res.status(409).json({ message: 'Email already in use' });
         }
 
-        // hashing the password for security
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // generating the email token and user ID
+        // Generate email token
         const emailToken = crypto.randomBytes(64).toString("hex");
 
-        // creating a new user
         const newUser = new User({ firstname, lastname, email, password: hashedPassword, emailToken });
-        await newUser.save();
 
-        // calling the sendMail function to send the email and email token
-        // await sendMail(email, emailToken);
-        res.status(201).json({ message: 'User registered successfully' });
-    
-    }
-    
-    // registration failed
-    catch (err) {
+        // Save user and get the stored document
+        const savedUser = await newUser.save();
+
+        //await sendMail(email, emailToken);
+        // Respond with userID
+        res.status(201).json({ message: 'User registered successfully', userID: savedUser.userID });
+
+    } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Registration failed' });
     }
-
 });
 
 // Verify Email API
