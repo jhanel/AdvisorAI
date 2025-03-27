@@ -8,6 +8,18 @@ import { Link } from 'react-router-dom';
 
 export default function Calendar() {
 
+    const styles = {
+        wrap: {
+            display: "flex"
+        },
+        left: {
+            marginRight: "10px"
+        },
+        main: {
+            flexGrow: "1"
+        }
+    };
+
     const colors = [
         {name: "Green", id: "#6aa84f"},
         {name: "Blue", id: "#3d85c6"},
@@ -138,41 +150,38 @@ export default function Calendar() {
     };
 
 
-    // function doNextWeek(event: any): void {
-    //     event.preventDefault();
-    //     const nextWeek = new Date(startDate);
-    //     nextWeek.setDate(nextWeek.getDate() + 7);
-    //     const newStartDate = nextWeek.toISOString().split('T')[0];
-    //     setStartDate(newStartDate);
-    //     setConfig(prevConfig => ({
-    //         ...prevConfig,
-    //         startDate: newStartDate,
-    //     }));
-    // }
+    function doNextWeek(event: any): void {
+        event.preventDefault();
+        const nextWeek = new Date(startDate);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        const newStartDate = nextWeek.toISOString().split('T')[0];
+        setStartDate(newStartDate);
+        setConfig(prevConfig => ({
+            ...prevConfig,
+            startDate: newStartDate,
+        }));
+    }
 
-    // function doPreviousWeek(event: any): void {
-    //     event.preventDefault();
-    //     const previousWeek = new Date(startDate);
-    //     previousWeek.setDate(previousWeek.getDate() - 7);
-    //     const newStartDate = previousWeek.toISOString().split('T')[0];
-    //     setStartDate(newStartDate);
-    //     setConfig(prevConfig => ({
-    //         ...prevConfig,
-    //         startDate: newStartDate,
-    //     }));
-    // }
+    function doPreviousWeek(event: any): void {
+        event.preventDefault();
+        const previousWeek = new Date(startDate);
+        previousWeek.setDate(previousWeek.getDate() - 7);
+        const newStartDate = previousWeek.toISOString().split('T')[0];
+        setStartDate(newStartDate);
+        setConfig(prevConfig => ({
+            ...prevConfig,
+            startDate: newStartDate,
+        }));
+    }
 
-    //put in div under FallingLeaves
-    // <button type="button" className="custom-button" onClick={doPreviousWeek}> Previous </button> &emsp;
-    // <button type="button" className="custom-button" onClick={doNextWeek}> Next </button>
 
     return (
-        <div className="class-input-container">
-            <h2 className = "title">Study Plan</h2>
+        <div>
             <br />
             <div className = "background" ></div>
             <FallingLeaves />
-
+            <button type="button" className="custom-button" onClick={doPreviousWeek}> Previous </button> &emsp;
+            <button type="button" className="custom-button" onClick={doNextWeek}> Next </button>
         <br />
         <br />
             <DayPilotCalendar
