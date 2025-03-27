@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 //require('dotenv').config({ path: './.env' });
-import "./ClassInputCSS.css";
+import "./LoginCSS.css";
 import FallingLeaves from "./FallingLeaves";
+
 
 const app_name = 'studentadvisorai.xyz';
 
@@ -62,18 +63,19 @@ function Login()
     };
 
     return(
-        <div id="loginDiv">
-            <FallingLeaves/>
+        <div id="loginDiv" className = "loginBox">
             <div className='background'></div>
-            <span id="inner-title">PLEASE LOG IN</span><br />
-            <input type="text" id="loginName" placeholder="Email" onChange={handleSetLoginName}/><br />
-            <input type="password" id="loginPassword" placeholder="Password" onChange={handleSetPassword} /><br />
-            <input type="submit" id="loginButton" className="buttons" value = "Do It"
-                onClick={doLogin} />
+            <FallingLeaves/>
+            <h2 id="inner-title" className = "title">Enter Information to Login:</h2>
+            <input type="text" id="loginName" className = "input-container" placeholder="Email" onChange={handleSetLoginName}/><br />
+            <input type="password" id="loginPassword" placeholder="Password"  className = "input-container" onChange={handleSetPassword} /><br /><br />
+            <input type="submit" id="loginButton" className="custom-button" value = "Do It"
+                onClick={doLogin} /><br />
             <span id="loginResult">{message}</span>
             <br></br>
-            <span>Don't have an account?
-                <Link to = "/register"> Register</Link>
+            <span>Don't have an account? <br /><br />
+                <Link to = "/register"> 
+                <button className = "custom-button">Register</button></Link>
             </span>
         </div>
         

@@ -8,6 +8,7 @@ import "primereact/resources/primereact.min.css";
 import "primereact/resources/primereact.css";
 import "./ClassInputCSS.css";
 import FallingLeaves from "./FallingLeaves";
+import { Calendar as PrimeCalendar } from 'primereact/calendar';
 
 
 
@@ -153,11 +154,11 @@ function ClassInput(){
                     <br /><br />
                     <div className="exam-container">
                     <span>Exam Dates for {courses}: </span>
-                    {exams[index]?.map((exams, examIndex) =>(
-                        <div key={examIndex}>
-                            <InputText value={exams} onChange={(e) => newExam(index, examIndex, e.target.value)} placeholder={`Exam ${examIndex + 1} Date`} className="custom-input"/>
-                            </div>
-                    ))}
+                    {exams[index]?.map((date, examIndex) => (
+                            <div key={examIndex}>
+                            <PrimeCalendar value={date} onChange={(e) => newExam(index, examIndex, e.value)} showTime hourFormat="24" className="custom-input" />
+                        </div>
+                        ))}
                     <Button label="Add New Exam" onClick={() => addExam(index)} className ='custom-button' />
                     <br /><br />
                     </div>

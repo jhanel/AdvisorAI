@@ -1,0 +1,81 @@
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url("/green-simple-back.jpg");
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+  }
+
+  .falling-leaves {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+  }
+  
+  .leaf {
+    position: absolute;
+    top: -0vh;
+    font-size: 1.25rem; /* changes the size of the emoji */
+    animation: fall linear infinite;
+  }
+  
+  @keyframes fall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+    }
+  }
+  
+  .loginBox {
+    background-color: #e7d8cc;
+    padding: 70px;
+    border-radius: 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: "Poppins", sans-serif;
+    color: black;
+    width: 100%;
+  }
+
+  .title {
+    font-size: 35px;
+    font-weight: bold;
+    color: #006076;
+    margin-bottom: 20px;
+  }
+
+  .custom-button {
+    background-color: #009da8;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 15px;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .custom-button:hover {
+    background-color: #006076;
+  }
+
+  .input-container {
+    background-color: #fffaf5;
+    padding: 30px;
+    color:black;
+    border-radius: 10px;
+    margin: 15px auto;
+    font-size: 16px;
+    width: 100%;
+  }

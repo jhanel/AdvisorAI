@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
-import "./ClassInputCSS.css";
+import "./LoginCSS.css";
 import FallingLeaves from "./FallingLeaves";
 
 const app_name = 'studentadvisorai.xyz';
@@ -78,20 +78,22 @@ function Register()
     };
 
     return(
-        <div id="registerDiv">
-            <FallingLeaves/>
+        <div id="registerDiv" className= "loginBox">
             <div className='background'></div>
-            <span id="inner-title">PLEASE SIGN UP</span><br />
-            <input type="text" id="registerFName" placeholder="First Name" onChange={handleSetRegisterFirstName}/><br />
-            <input type="text" id="registerLName" placeholder="Last Name" onChange={handleSetRegisterLastName}/><br />
-            <input type="text" id="registerEmail" placeholder="Email" onChange={handleSetRegisterEmail}/><br />
-            <input type="password" id="registerPassword" placeholder="Password" onChange={handleSetRegisterPassword}/><br />
-            <input type="submit" id="registerButton" className="buttons" value = "Do It"
-                onClick={doRegister} />
-            <span id="registerResult">{message}</span>
+            <FallingLeaves/>
+            <h2 id="inner-title" className = "title">Enter Information to Sign-Up:</h2>
+            <input type="text" className = "input-container" id="registerFName" placeholder="First Name" onChange={handleSetRegisterFirstName}/><br />
+            <input type="text" className = "input-container" id="registerLName" placeholder="Last Name" onChange={handleSetRegisterLastName}/><br />
+            <input type="text" className = "input-container" id="registerEmail" placeholder="Email" onChange={handleSetRegisterEmail}/><br />
+            <input type="password" className = "input-container" id="registerPassword" placeholder="Password" onChange={handleSetRegisterPassword}/><br />
+            <br/>
+            <input type="submit" id="loginButton" className="custom-button" value = "Do It"
+                onClick={doRegister} /><br />
+            <span id="registerResult">{message}</span><br/>
             <br></br>
-            <span>Already have an account?
-                <Link to = "/"> Login</Link>
+            <span>Already have an account?<br/>
+                <Link to = "/"> 
+                <button className="custom-button">Login</button></Link>
             </span>
         </div>
     );
