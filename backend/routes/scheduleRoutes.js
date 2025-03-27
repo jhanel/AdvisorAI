@@ -77,7 +77,14 @@ router.post('/register', async (req, res) => {
 
         //await sendMail(email, emailToken);
         // Respond with userID
-        res.status(201).json({ message: 'User registered successfully', userID: savedUser.userID });
+        //res.status(201).json({ message: 'User registered successfully', userID: savedUser.userID });
+        res.status(200).json({
+            id: userID,
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            error: ''
+        });
 
     } catch (err) {
         console.error(err);
