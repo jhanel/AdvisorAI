@@ -27,8 +27,8 @@ export default function Calendar() {
         {name: "4", id: 4},
     ];
 
-    const [calendar, setCalendar] = useState<DayPilot.Calendar>();
-    const [startDate, setStartDate] = useState<string>(() => {
+    const [calendar, setCalendar] = React.useState<DayPilot.Calendar>();
+    const [startDate] = useState<string>(() => {
         const today = new Date();
         return today.toISOString().split('T')[0];
     });
@@ -107,7 +107,7 @@ export default function Calendar() {
         startDate: startDate,
     };
 
-    const [config, setConfig] = useState(initialConfig);
+    const [config] = useState(initialConfig);
 
     useEffect(() => {
 

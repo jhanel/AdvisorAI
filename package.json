@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@daypilot/daypilot-lite-react": "^3.32.1"
+    "@daypilot/daypilot-lite-react": "^3.32.1",
+    "dotenv": "^16.4.7"
   }
 }

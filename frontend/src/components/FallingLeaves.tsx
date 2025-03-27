@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./ClassInputCSS.css";
 
 function FallingLeaves() {
-  const [leaves, setLeaves] = useState<Array<{ id: number; style: any }>>([]);
+  const [leaves, setLeaves] = React.useState<Array<{ id: number; style: any }>>([]);
 
   useEffect(() => {
     const generateLeaves = () => {

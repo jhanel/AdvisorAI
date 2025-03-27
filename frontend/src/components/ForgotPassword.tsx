@@ -12,7 +12,7 @@ function buildPath(route: string): string {
 }
 
 function ForgotPassword() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = React.useState('');
   const [message, setMessage] = useState('');
 
   async function handleSubmit(e: any) {

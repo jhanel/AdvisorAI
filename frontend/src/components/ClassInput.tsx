@@ -1,3 +1,4 @@
+
 import React, {useEffect, useState} from "react";
 import { Dropdown } from 'primereact/dropdown';
 import {DayPilot, DayPilotCalendar} from "@daypilot/daypilot-lite-react";
@@ -8,14 +9,24 @@ import "primereact/resources/primereact.min.css";
 import "primereact/resources/primereact.css";
 import "./ClassInputCSS.css";
 import FallingLeaves from "./FallingLeaves";
-import { Calendar as PrimeCalendar } from 'primereact/calendar';
+import { Calendar } from 'primereact/calendar';
 
+// const app_name = 'studentadvisorai.xyz';
 
+// function buildPath(route:string) : string{
+//     if (process.env.NODE_ENV != 'development')
+//     {
+//     return 'http://' + app_name + ':5002/' + route;
+//     }
+//     else
+//     {
+//     return 'http://localhost:5002/' + route;
+//     }
+// }
 
 
 function ClassInput(){
-
-        const [calendar, setCalendar] = useState<DayPilot.Calendar>();
+        const [calendar, setCalendar] = React.useState<DayPilot.Calendar>();
     
         const contextMenu = new DayPilot.Menu({
             items: [
@@ -53,7 +64,7 @@ function ClassInput(){
             durationBarVisible: false,
         };
     
-        const [config, setConfig] = useState(initialConfig);
+        const [config] = useState(initialConfig);
 
     
         const onTimeRangeSelected = async (args: DayPilot.CalendarTimeRangeSelectedArgs) => {
@@ -78,7 +89,7 @@ function ClassInput(){
 
     const [courses, setCourses] = useState<string[]>([]);
     const [difficulty, setDifficulty] = useState<{ [key: number]: string }>({});
-    const [exams, setExams] = useState<{ [key: number]: string[] }>({});
+    const [exams, setExams] = useState<{ [key: number]: (Date | null)[] }>({});
 
     const difficultyLevels = [
         { name: 'Easy', code: 'Easy' },
@@ -90,7 +101,7 @@ function ClassInput(){
     //will adjust for the num of classes so they can input proper courses
     useEffect(() => {
         if (selectedClassNum) {
-            setCourses(new Array(parseInt(selectedClassNum.code)).fill(""));
+            setCourses(new Array(parseInt(selectedClassNum)).fill(""));
             setExams({});
         }
     }, [selectedClassNum]);
@@ -105,23 +116,23 @@ function ClassInput(){
         setDifficulty({...difficulty, [index]: value});
     };
 
-    const newExam = (index: number, examIndex: number, value: string) => {
-        const newExams = {...exams };
-        if(!newExams[index]) {
-            newExams[index] = [];
-        }
-        newExams[index][examIndex] = value;
-        setExams(newExams);
+    const newExam = (index: number, examIndex: number, value: Date | null) => {
+        setExams(prevExams => {
+            const updatedExams = { ...prevExams };
+            if (!updatedExams[index]) {
+                updatedExams[index] = [];
+            }
+            updatedExams[index][examIndex] = value;
+            return updatedExams;
+        });
     };
 
     const addExam = (index: number) => {
-        const newExams = {...exams };
-        if(!newExams[index]) {
-            newExams[index] = [];
-        }
-        newExams[index].push("");
-        setExams(newExams);
-    }
+        setExams(prevExams => ({
+            ...prevExams,
+            [index]: [...(prevExams[index] || []), null] // Ensure it starts as null
+        }));
+    };
 
     function genSchedule(event:any) : void
     {
@@ -156,7 +167,13 @@ function ClassInput(){
                     <span>Exam Dates for {courses}: </span>
                     {exams[index]?.map((date, examIndex) => (
                             <div key={examIndex}>
-                            <PrimeCalendar value={date} onChange={(e) => newExam(index, examIndex, e.value)} showTime hourFormat="24" className="custom-input" />
+                            <Calendar
+                                value={date} // Ensures correct Date type
+                                onChange={(e) => newExam(index, examIndex, e.value as Date | null)}
+                                showTime
+                                hourFormat="24"
+                                className="custom-input"
+                            />
                         </div>
                         ))}
                     <Button label="Add New Exam" onClick={() => addExam(index)} className ='custom-button' />
