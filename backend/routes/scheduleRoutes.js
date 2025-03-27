@@ -44,7 +44,6 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     
     const { firstname, lastname, email, password} = req.body;
-
     
     // checks for any missing fields when registering
     if ( !firstname || !lastname || !email || !password)
@@ -57,8 +56,20 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
     }
 
-    if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
-        return res.status(400).json({ error: 'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.' });
+    if (!/[a-z]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one lowercase letter.' });
+    }
+
+    if (!/[A-Z]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one uppercase letter.' });
+    }
+
+    if (!/\d/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one number.' });
+    }
+
+    if (!/[@$!%*?&]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one special character (@$!%*?&).' });
     }
 
     try {
