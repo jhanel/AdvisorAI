@@ -4,8 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-//i changed this:
-const url = process.env.MONGODB_URI;
+
+
 
 const app = express();
 app.use(cors());

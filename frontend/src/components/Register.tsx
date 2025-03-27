@@ -3,18 +3,18 @@ import React, { useState } from 'react';
 import "./LoginCSS.css";
 import FallingLeaves from "./FallingLeaves";
 
-const app_name = 'studentadvisorai.xyz';
+// const app_name = 'studentadvisorai.xyz';
 
-function buildPath(route:string) : string{
-    if (process.env.NODE_ENV != 'development')
-    {
-    return 'http://' + app_name + ':5002/' + route;
-    }
-    else
-    {
-    return 'http://localhost:5002/' + route;
-    }
-}
+// function buildPath(route:string) : string{
+//     if (process.env.NODE_ENV != 'development')
+//     {
+//     return 'http://' + app_name + ':5002/' + route;
+//     }
+//     else
+//     {
+//     return 'http://localhost:5002/' + route;
+//     }
+// }
 
 function Register()
 {
@@ -50,12 +50,12 @@ function Register()
 
         try{
 
-            const response = await fetch(buildPath('api/schedule/register'),
-                {method:'POST',body:js,headers:{'Content-Type':
-                'application/json'}});
-            // const response = await fetch('http://localhost:5002/api/schedule/register',
-            //     {method:'POST', body:js, headers:{'Content-Type': 'application/json'}
-            //     });
+            //const response = await fetch(buildPath('api/schedule/register'),
+             //   {method:'POST',body:js,headers:{'Content-Type':
+              //  'application/json'}});
+             const response = await fetch('http://localhost:5002/api/schedule/register',
+                 {method:'POST', body:js, headers:{'Content-Type': 'application/json'}
+              });
             var res = JSON.parse(await response.text());
 
             if( res.id <= 0 ){
