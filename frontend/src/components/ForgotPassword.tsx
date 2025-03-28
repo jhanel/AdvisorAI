@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import FallingLeaves from './FallingLeaves';
 
 const app_name = 'studentadvisorai.xyz';
 
@@ -46,9 +47,10 @@ function ForgotPassword() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '100vh',
       }}
     >
+      <div className='background'></div>
+      <FallingLeaves/>
       <div
         style={{
           color: 'white',
@@ -104,7 +106,7 @@ function ForgotPassword() {
         <br />
 
         <span style={{ textShadow: '1px 1px 4px black' }}>
-          Return to <Link to="/" style={{ color: '#00aaff',textDecoration: 'underline' }}>Login</Link>
+          Return to <Link to="/login" style={{ color: '#00aaff',textDecoration: 'underline' }}>Login</Link>
         </span>
       </div>
     </div>

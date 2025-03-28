@@ -3,7 +3,7 @@
 // import viteLogo from '/vite.svg'
 import './App.css'
 import LoginPage from './pages/LoginPage.tsx';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Link } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage.tsx';
 import DashboardPage from './pages/DashboardPage.tsx';
 import ClassInputPage from './pages/ClassInputPage.tsx';
@@ -13,12 +13,19 @@ import HomePage from './pages/HomePage.tsx'
 function App() {
   return (
     <div className="App">
+      <nav className = "navBar">
+      <ul>
+        <li><Link to="/">Home</Link></li>
+        <li><a href="https://github.com/jhanel/AdvisorAI">Github</a></li>
+        <li><Link to="/dashboard">Dashboard</Link></li>
+      </ul>
+      </nav>
       <div className ="logo-place">
         <img src="/public/advisorLogo.png" alt="Logo" className = "logo"></img>
       </div>
       <h1>Advisor AI</h1>
       <h2>_______</h2>
-      <br/>
+      <br/><br/>
       <Routes>
         <Route path='/' element={<HomePage />}/>
         <Route path='/login' element={<LoginPage />}/>

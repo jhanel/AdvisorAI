@@ -237,15 +237,13 @@ function ClassInput(){
     async function addCourse(event: any, index: number): Promise<void> {
         event.preventDefault();
     
-        const courseTitle = courses[index];
-        const courseDifficulty = difficulty[index];
-        const examDates = exams[index] || [];
-    
+        const courseTitle = courses[index]?.trim(); 
+        const courseDifficulty = difficulty[index]?.trim();
+   
         const courseData = {
             userId: userData.id, 
             courseTitle,
             difficulty: courseDifficulty,
-            examDate: examDates[0] ? examDates[0].toISOString() : null 
         };
     
         var js = JSON.stringify(courseData);

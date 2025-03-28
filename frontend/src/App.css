@@ -17,6 +17,41 @@
     left: 20px;
 }
 
+.navBar {
+  position: absolute;
+  top: 30px;
+  right: 60px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: none;
+}
+
+.navBar ul {
+  list-style: none;
+  display: flex;
+  gap: 50px;
+  margin: 0;
+  padding: 0;
+}
+
+.navBar li {
+  display: inline;
+}
+
+.navBar a {
+  text-decoration: none;
+  color: #000000;
+  font-size: 20px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.navBar a:hover {
+  color: #007bff;
+}
+
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
