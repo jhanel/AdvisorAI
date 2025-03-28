@@ -194,6 +194,11 @@ function ClassInput(){
         }));
     };
 
+    // const newDifficulty = (index: number, value: string) => {
+    //     setDifficulty({...difficulty, [index]: value});
+    // };
+
+
     //adds exam slot for user
     const addNewExam = (index: number) => {
         setExams(prevExams => ({
@@ -242,7 +247,7 @@ function ClassInput(){
             // const response = await fetch('http://localhost:5002/api/addexam',
             //     {method:'POST', body:JSON.stringify(examData), headers:{'Content-Type': 'application/json'}
             //     });
-            const res = await response.json();
+            var res = await response.json();
     
             if (!response.ok) {
                 setMessage(res.error || 'Failed to add exam.');
@@ -300,16 +305,28 @@ function ClassInput(){
     
         const courseTitle = courses[index]; 
         const courseDifficulty = difficulty[index];
+        const userID = userData.id;
+        console.log('difficulty level:', courseDifficulty);
+        console.log('user id:', userData.id)
 
-        //console.log('course title:', courses[index]);
+        if (!userID || !courseTitle || !courseDifficulty) {
+            setMessage("Missing required field(s).");
+            console.log("Error: Missing required field(s).", { userID, courseTitle, courseDifficulty });
+            return;
+        }
 
-        //console.log('difficulty level:', courseDifficulty);
-   
+        console.log("inside courseData:", { userID, coursetitle: courseTitle, difficulty: courseDifficulty });
+
         const courseData = {
-            userId: userData.id, 
-            courseTitle,
+            userID, 
+            coursetitle: courseTitle,
             difficulty: courseDifficulty,
         };
+
+        console.log('course title:', courses[index]);
+        console.log('user id:', userData.id)
+        console.log('difficulty level:', courseDifficulty);
+   
     
         var js = JSON.stringify(courseData);
     
