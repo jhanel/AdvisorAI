@@ -18,8 +18,8 @@ const courseRoutes = require('./routes/courseRoutes');
 const examRoutes = require('./routes/examRoutes.js');
 
 app.use('/api', scheduleRoutes);
-app.use(courseRoutes);
-app.use(examRoutes);
+app.use('/api', courseRoutes);
+app.use('/api', examRoutes);
 
 const PORT = process.env.PORT || 5002;
 
