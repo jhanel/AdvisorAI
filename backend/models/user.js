@@ -7,8 +7,12 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     isVerifiedEmail: { type: Boolean, default: false },
     emailToken: { type: String, default: null },
+    userID: {type: Number, required: true, unique: true},
     resetPasswordToken: { type: String }, 
-    resetPasswordExpires: { type: Date }
+    resetPasswordExpires: { type: Date },
+    availabilityId: { type: mongoose.Schema.Types.ObjectId, ref: 'availability' },
+    courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'course' }] 
 });
+
 
 module.exports = mongoose.model('User', userSchema);

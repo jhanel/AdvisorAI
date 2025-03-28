@@ -16,10 +16,14 @@ mongoose.connect(process.env.MONGO_URI)
 const scheduleRoutes = require('./routes/scheduleRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const examRoutes = require('./routes/examRoutes.js');
+const availabilityRoutes = require('./routes/availabilityRoutes'); 
+//const studySchedule = require('./routes/studyScheduleRoutes'); 
 
 app.use('/api/schedule', scheduleRoutes);
 app.use('/api', courseRoutes);
 app.use('/api', examRoutes);
+app.use('/api/availability', availabilityRoutes);
+//app.use('/api/studySchedule', studySchedule);
 
 
 const PORT = process.env.PORT || 5002;
