@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const availabilitySchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true}, // Reference to User
@@ -11,5 +11,5 @@ const availabilitySchema = new mongoose.Schema({
   Saturday: [{ start_time: String, end_time: String }]
 });
 
-const Availability = mongoose.model('Availability', availabilitySchema);
-export default Availability;
+module.exports = mongoose.model('Availability', availabilitySchema);
+
