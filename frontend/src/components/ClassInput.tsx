@@ -35,7 +35,7 @@ function ClassInput(){
     };
     
     type Availability = {
-        [key in "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"]: TimeSlot[];
+        [key in "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday"]: TimeSlot[];
     };
 
     const [availability, setAvailability] = useState<Availability>({
@@ -43,7 +43,9 @@ function ClassInput(){
         Tuesday: [],
         Wednesday: [],
         Thursday: [],
-        Friday: []
+        Friday: [],
+        Saturday: [],
+        Sunday: [],
     });
 
     const handleAvailabilityChange = (day: keyof Availability, index: number, field: keyof TimeSlot, value: string) => {
@@ -68,7 +70,7 @@ function ClassInput(){
         });
     };
 
-    const daysOfWeek: (keyof Availability)[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const daysOfWeek: (keyof Availability)[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
     const renderTimeSlots = (day: keyof Availability) => {
         return availability[day].map((timeSlot, index) => (
@@ -185,18 +187,77 @@ function ClassInput(){
         setCourses(newCourses);
     };
 
-    const newDifficulty = (index: number, value: string) => {
-        setDifficulty({...difficulty, [index]: value});
+    const newDifficulty = (index: number, value: { name: string; code: string }) => {
+        setDifficulty(prevDifficulty => ({
+            ...prevDifficulty,
+            [index]: value.name
+        }));
     };
 
-    //add and removes exams for user
-    const addExam = (index: number) => {
+    //adds exam slot for user
+    const addNewExam = (index: number) => {
         setExams(prevExams => ({
             ...prevExams,
             [index]: [...(prevExams[index] || []), null]
         }));
     };
 
+    //addexam api connection
+    const addExam = async (index: number) => {
+        const courseTitle = courses[index];
+        const examDate = exams[index]; 
+    
+        // console.log("course title:", courseTitle);
+        // console.log("exam date:", examDate);
+    
+        if (!courseTitle || !examDate) {
+            setMessage("Course title and exam date are required.");
+            return;
+        }
+
+        //for unique exam names
+        const uniqueNames = examDate.map(async (examDate, examIndex) => {
+            if (!examDate) return;
+
+    
+        const examData = {
+            userID: userData.id,
+            courseID: courseTitle,
+            examname: `${courseTitle} Exam #${examIndex + 1}`,
+            examdate: examDate.toISOString(),
+        };
+    
+        // console.log("course title:", courseTitle);
+        // console.log("exam date:", examDate);
+        // console.log("exam name:", `${courseTitle} Exam #${examIndex + 1}`);
+        // console.log("user id:", userData.id);
+
+        try {
+            const response = await fetch(buildPath('api/addexam'), {
+                method: 'POST',
+                body: JSON.stringify(examData),
+                headers: { 'Content-Type': 'application/json' },
+            });
+    
+            // const response = await fetch('http://localhost:5002/api/addexam',
+            //     {method:'POST', body:JSON.stringify(examData), headers:{'Content-Type': 'application/json'}
+            //     });
+            const res = await response.json();
+    
+            if (!response.ok) {
+                setMessage(res.error || 'Failed to add exam.');
+                return;
+            }
+    
+            setMessage(res.message || 'Exam added successfully!');
+        } catch (error) {
+            alert('Error: ' + error);
+        }
+        });
+        await Promise.all(uniqueNames);
+    };
+
+    //deletes exam slot
     const removeExam = (courseIndex: number, examIndex: number) => {
         setExams(prevExams => {
             const updatedExams = { ...prevExams };
@@ -208,7 +269,7 @@ function ClassInput(){
     const renderExamDates = (courseIndex: number) => {
         return exams[courseIndex]?.map((date, examIndex) => (
             <div key={examIndex} className="exam-date">
-                <label className = "custom-font">Exam Date:</label>
+                <label className="custom-font">Exam Date:</label>
                 <Calendar
                     value={date}
                     onChange={(e) => {
@@ -220,7 +281,7 @@ function ClassInput(){
                     hourFormat="24"
                     className="custom-input"
                 />
-                <Button label="Remove Exam" onClick={() => removeExam(courseIndex, examIndex)} className="p-button-danger p-button-outlined" />
+                <Button label="Remove Exam" onClick={() => removeExam(courseIndex, examIndex)} className="p-button-danger p-button-outlined" /> <br/>
             </div>
         ));
     };
@@ -237,8 +298,12 @@ function ClassInput(){
     async function addCourse(event: any, index: number): Promise<void> {
         event.preventDefault();
     
-        const courseTitle = courses[index]?.trim(); 
-        const courseDifficulty = difficulty[index]?.trim();
+        const courseTitle = courses[index]; 
+        const courseDifficulty = difficulty[index];
+
+        //console.log('course title:', courses[index]);
+
+        //console.log('difficulty level:', courseDifficulty);
    
         const courseData = {
             userId: userData.id, 
@@ -257,12 +322,15 @@ function ClassInput(){
             // });
     
             var res = await response.json();
+            console.log('API Response Body:', res);
+
     
             if (!response.ok) {
                 setMessage(res.error || 'Failed to add course.');
                 return;
             }
-    
+
+            console.log('course added', res.message);
             setMessage(res.message || `Course ${courseTitle} added successfully!`);
     
         } catch (error: any) {
@@ -310,18 +378,15 @@ function ClassInput(){
 
                  <span id="addCourseResults">{message}</span><br/>
                     <div className="exam-container">
-                    <label className = "custom-font">Exam Dates for {courses}: </label>
-                    {Object.keys(exams).map((courseIndex) => (
-                <div key={courseIndex}>
-                    {renderExamDates(parseInt(courseIndex))}
-                </div>
-                        ))}
-                        <br />
+                        <label className="custom-font">Exam Dates for {courses}: </label>
+                        {renderExamDates(index)}
+                        <Button label="Add New Exam Slot" onClick={() => addNewExam(index)} className="custom-button" />
+                        <br/><br/>
+                        <Button label="Add Exam(s)" onClick={() => addExam(index)} className="p-button-danger p-button-outlined" />
 
-                    <Button label="Add New Exam" onClick={() => addExam(index)} className ='custom-button' />
-                    <br /><br />
+                        <br /><br />
                     </div>
-                    </div>
+                </div>
             ))}
             <br /><br />
 
