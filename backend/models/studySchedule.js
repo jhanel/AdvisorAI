@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const scheduleSchema = new mongoose.Schema({
+const studyScheduleSchema  = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
   generatedSchedule: {
     Sunday: [{ start_time: String, end_time: String, course: String }],
@@ -13,5 +13,4 @@ const scheduleSchema = new mongoose.Schema({
   }
 });
 
-const Schedule = mongoose.model('Schedule', scheduleSchema);
-export default Schedule;
+module.exports = mongoose.model('StudySchedule', studyScheduleSchema);

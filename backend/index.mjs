@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+/*import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 
 // How to run:
@@ -117,3 +117,7 @@ generateStudySchedule(userInput).then((schedule) => {
   const validatedSchedule = validateSchedule(schedule, userInput.availability);
   console.log("Final Study Schedule:", JSON.stringify(validatedSchedule, null, 2));
 });
+
+
+*/
+
