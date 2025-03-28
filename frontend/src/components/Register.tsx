@@ -3,18 +3,18 @@ import React, { useState } from 'react';
 import "./LoginCSS.css";
 import FallingLeaves from "./FallingLeaves";
 
-// const app_name = 'studentadvisorai.xyz';
+const app_name = 'studentadvisorai.xyz';
 
-// function buildPath(route:string) : string{
-//     if (process.env.NODE_ENV != 'development')
-//     {
-//     return 'http://' + app_name + ':5002/' + route;
-//     }
-//     else
-//     {
-//     return 'http://localhost:5002/' + route;
-//     }
-// }
+function buildPath(route:string) : string{
+    if (process.env.NODE_ENV != 'development')
+    {
+    return 'http://' + app_name + ':5002/' + route;
+    }
+    else
+    {
+    return 'http://localhost:5002/' + route;
+    }
+}
 
 function Register()
 {
@@ -40,55 +40,65 @@ function Register()
         setRegisterPassword( e.target.value );
     }
 
-    async function doRegister(event:any) : Promise<void>
-    {
+    async function doRegister(event: any): Promise<void> {
         event.preventDefault();
-        var obj = {firstname:registerFirstName, lastName:registerLasttName, 
-            email:registerEmail, password:registerPassword
+        
+        var obj = {
+            firstname: registerFirstName, 
+            lastname: registerLasttName, 
+            email: registerEmail, 
+            password: registerPassword
         };
+        
         var js = JSON.stringify(obj);
-
-        try{
-
-            //const response = await fetch(buildPath('api/schedule/register'),
-             //   {method:'POST',body:js,headers:{'Content-Type':
-              //  'application/json'}});
-             const response = await fetch('http://localhost:5002/api/schedule/register',
-                 {method:'POST', body:js, headers:{'Content-Type': 'application/json'}
-              });
-            var res = JSON.parse(await response.text());
-
-            if( res.id <= 0 ){
-                setMessage('User/Password combination incorrect');
-            }else{
-                var user =
-                {firstName:res.firstname, lastName:res.lName, id:res.id, 
-                    email:res.email, password: res.password
-                };
-                localStorage.setItem('user_data', JSON.stringify(user));
-                setMessage('');
-                window.location.href = '/';
+    
+        try {
+            const response = await fetch(buildPath('api/schedule/register'),
+            {method:'POST',body:js,headers:{'Content-Type':
+            'application/json'}});
+            // const response = await fetch('http://localhost:5002/api/schedule/register', {
+            //     method: 'POST',
+            //     body: js,
+            //     headers: { 'Content-Type': 'application/json' }
+            // });
+    
+            var res = await response.json();
+    
+            if (!response.ok) {
+                setMessage(res.error || 'Registration failed.');
+                return;
             }
-            }
-            catch(error:any)
-            {
-            alert(error.toString());
-            return;
+    
+            // Save user data in localStorage
+            var user = {
+                firstName: res.firstname, 
+                lastName: res.lastname, 
+                id: res.userID, 
+                email: res.email
+            };
+            localStorage.setItem('user_data', JSON.stringify(user));
+    
+            setMessage('');
+            window.location.href = '/';
+    
+        } catch (error: any) {
+            alert('Error: ' + error.toString());
         }
-    };
+    }
 
     return(
-        <div id="registerDiv">
+        <div id="registerDiv" className= "loginBox">
             <FallingLeaves/>
             <div className='background'></div>
-            <span id="inner-title">PLEASE SIGN UP</span><br />
-            <input type="text" id="registerFName" placeholder="First Name" onChange={handleSetRegisterFirstName}/><br />
-            <input type="text" id="registerLName" placeholder="Last Name" onChange={handleSetRegisterLastName}/><br />
-            <input type="text" id="registerEmail" placeholder="Email" onChange={handleSetRegisterEmail}/><br />
-            <input type="password" id="registerPassword" placeholder="Password" onChange={handleSetRegisterPassword}/><br />
-            <input type="submit" id="registerButton" className="buttons" value = "Do It"
-                onClick={doRegister} />
-            <span id="registerResult">{message}</span>
+            <h2 id="inner-title" className = "title">Enter Information to Sign-Up:</h2>
+             <input type="text" className = "input-container" id="registerFName" placeholder="First Name" onChange={handleSetRegisterFirstName}/><br />
+             <input type="text" className = "input-container" id="registerLName" placeholder="Last Name" onChange={handleSetRegisterLastName}/><br />
+             <input type="text" className = "input-container" id="registerEmail" placeholder="Email" onChange={handleSetRegisterEmail}/><br />
+             <input type="password" className = "input-container" id="registerPassword" placeholder="Password" onChange={handleSetRegisterPassword}/><br />
+             <br/>
+             <input type="submit" id="loginButton" className="custom-button" value = "Do It"
+                 onClick={doRegister} /><br />
+             <span id="registerResult">{message}</span><br/>
             <br></br>
             <span>Already have an account?<br/>
                 <Link to = "/"> 

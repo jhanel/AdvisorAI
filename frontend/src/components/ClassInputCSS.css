@@ -4,15 +4,17 @@
     border-radius: 15px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    font-family: "Poppins", sans-serif;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: black;
   }
   
   .title {
-    font-size: 24px;
+    font-size: px;
     font-weight: bold;
-    color: #006076;
+    color: #6E2F2C;
     margin-bottom: 20px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    
   }
   
   .custom-dropdown, .custom-input {
@@ -23,6 +25,7 @@
     color: black;
     width: 200px;
     margin: 10px 5px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   }
   
   .custom-dropdown .p-dropdown-label {
@@ -36,26 +39,40 @@
     border-radius: 10px;
     margin: 10px auto;
     width: 60%;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   }
   
   .exam-container {
     margin-top: 10px;
     color: black;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   }
   
+  h2{
+    color:#6E2F2C;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+
+  h1{
+    color:#6E2F2C;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+
   .custom-button {
-    background-color: #009da8;
+    background-color: #04919b;
     border: none;
     border-radius: 10px;
     padding: 8px 15px;
-    color: black;
+    color: rgb(255, 255, 255);
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
   }
   
   .custom-button:hover {
-    background-color: #006076;
+    background-color: #026666;
   }
   
   .primary {
@@ -74,6 +91,22 @@
     background-position: center;
     z-index: -1;
   }
+
+  .custom-day {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: black;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+
+
+  .custom-font {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: black;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+
 
   .falling-leaves {
     position: fixed;

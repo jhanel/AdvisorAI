@@ -38,7 +38,7 @@
   }
   
   .loginBox {
-    background-color: #e7d8cc;
+    background-color: #f0e4db;
     padding: 70px;
     border-radius: 30px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -51,12 +51,12 @@
   .title {
     font-size: 35px;
     font-weight: bold;
-    color: #006076;
+    color: #6E2F2C;
     margin-bottom: 20px;
   }
 
   .custom-button {
-    background-color: #009da8;
+    background-color: #16a5af;
     border: none;
     border-radius: 10px;
     padding: 8px 15px;
@@ -71,7 +71,7 @@
   }
 
   .input-container {
-    background-color: #fffaf5;
+    background-color: white;
     padding: 30px;
     color:black;
     border-radius: 10px;
