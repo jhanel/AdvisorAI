@@ -24,10 +24,10 @@ router.post('/login', async (req, res) => {
         }
 
         // If the password matches, return user info
-        const { userId, firstname, lastname } = userData;
+        const { userID, firstname, lastname } = userData;
 
         res.status(200).json({
-            id: userId,
+            id: userID,
             firstname: firstname,
             lastname: lastname,
             error: ''
