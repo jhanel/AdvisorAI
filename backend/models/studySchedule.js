@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const studyScheduleSchema  = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
+const studyScheduleSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   generatedSchedule: {
     Sunday: [{ start_time: String, end_time: String, course: String }],
     Monday: [{ start_time: String, end_time: String, course: String }],

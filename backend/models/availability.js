@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const availabilitySchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true}, // Reference to User
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}, // Reference to User
   Sunday: [{ start_time: String, end_time: String }],
   Monday: [{ start_time: String, end_time: String }],
   Tuesday: [{ start_time: String, end_time: String }],

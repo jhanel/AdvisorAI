@@ -56,13 +56,12 @@ async function generateStudySchedule(userData) {
   }
 }
 
-// Route to generate and store AI-generated study schedule
 router.post('/generate-schedule', async (req, res) => {
   try {
     const { userId } = req.body;
 
     // Fetch user data from MongoDB
-    const user = await User.findById(userId).populate('courses').populate('availability');
+    const user = await User.findById(userId).populate('courses').populate('availabilityId');
     if (!user) return res.status(404).json({ error: "User not found" });
 
     // Format user data for AI input
@@ -70,21 +69,39 @@ router.post('/generate-schedule', async (req, res) => {
       courses: user.courses.map(course => course.coursetitle),
       difficulty: Object.fromEntries(user.courses.map(course => [course.coursetitle, course.difficulty])),
       exams: Object.fromEntries(user.courses.map(course => [course.coursetitle, course.examDate ? course.examDate.toISOString() : "None"])),
-      availability: user.availability
+      availability: user.availabilityId
     };
+
+    // Debugging: Log userData before sending it to AI
+    console.log("🚀 Debug: User Data for AI", JSON.stringify(userData, null, 2));
 
     // Generate study schedule using AI
     const generatedSchedule = await generateStudySchedule(userData);
 
-    // Store generated schedule in MongoDB
-    const newSchedule = new StudySchedule({ userId, generatedSchedule });
-    await newSchedule.save();
+    if (!generatedSchedule || Object.keys(generatedSchedule).length === 0) {
+      return res.status(500).json({ error: "AI failed to generate a valid study schedule." });
+    }
 
-    res.status(201).json({ message: "Study schedule generated successfully", schedule: newSchedule });
+    // 🔄 **Check if an existing study schedule exists**
+    let existingSchedule = await StudySchedule.findOne({ userId });
+
+    if (existingSchedule) {
+      // **Update existing schedule**
+      existingSchedule.generatedSchedule = generatedSchedule;
+      await existingSchedule.save();
+      res.status(200).json({ message: "Study schedule updated successfully", schedule: existingSchedule });
+    } else {
+      // **Create a new schedule if none exists**
+      const newSchedule = new StudySchedule({ userId, generatedSchedule });
+      await newSchedule.save();
+      res.status(201).json({ message: "Study schedule generated successfully", schedule: newSchedule });
+    }
   } catch (error) {
     console.error("Error generating schedule:", error);
     res.status(500).json({ error: "Failed to generate study schedule." });
   }
 });
+
+
 
 module.exports = router;

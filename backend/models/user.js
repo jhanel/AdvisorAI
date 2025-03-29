@@ -10,8 +10,8 @@ const userSchema = new mongoose.Schema({
     userID: {type: Number, required: true, unique: true},
     resetPasswordToken: { type: String }, 
     resetPasswordExpires: { type: Date },
-    availabilityId: { type: mongoose.Schema.Types.ObjectId, ref: 'availability' },
-    courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'course' }] 
+    availabilityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Availability' },
+    courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }] 
 });
 
 
