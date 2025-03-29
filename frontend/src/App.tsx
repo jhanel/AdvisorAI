@@ -21,7 +21,7 @@ function App() {
       </ul>
       </nav>
       <div className ="logo-place">
-        <img src="/public/advisorLogo.png" alt="Logo" className = "logo"></img>
+        <img src="/advisorLogo.png" alt="Logo" className = "logo"></img>
       </div>
       <h1>Advisor AI</h1>
       <h2>_______</h2>

@@ -68,7 +68,8 @@ function Register()
                 setMessage(res.error || 'Registration failed.');
                 return;
             }
-    
+
+            setMessage(res.message || 'Registration success');
             // Save user data in localStorage
             var user = {
                 firstName: res.firstname, 
@@ -78,8 +79,8 @@ function Register()
             };
             localStorage.setItem('user_data', JSON.stringify(user));
     
-            setMessage('');
-            window.location.href = '/';
+            setMessage(res.message || 'User Registered');
+            window.location.href = '/login';
     
         } catch (error: any) {
             alert('Error: ' + error.toString());
@@ -88,8 +89,8 @@ function Register()
 
     return(
         <div id="registerDiv" className= "loginBox">
-            <FallingLeaves/>
             <div className='background'></div>
+            <FallingLeaves/>
             <h2 id="inner-title" className = "title">Enter Information to Sign-Up:</h2>
              <input type="text" className = "input-container" id="registerFName" placeholder="First Name" onChange={handleSetRegisterFirstName}/><br />
              <input type="text" className = "input-container" id="registerLName" placeholder="Last Name" onChange={handleSetRegisterLastName}/><br />
@@ -101,7 +102,7 @@ function Register()
              <span id="registerResult">{message}</span><br/>
             <br></br>
             <span>Already have an account?<br/>
-                <Link to = "/"> 
+                <Link to = "/login"> 
                 <button className="custom-button">Login</button></Link>
             </span>
         </div>

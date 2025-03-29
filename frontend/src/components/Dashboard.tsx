@@ -182,7 +182,8 @@ export default function Calendar() {
             />
             <br />
             <Link to = "/">
-        <button type="button" id="logoutButton" className="custom-button"> Log Out </button></Link>
+        <button type="button" id="logoutButton" className="custom-button"> Log Out </button></Link> <Link to = '/input'>
+                    <button id="Back to Input" className="custom-button primary" >Back to Input</button></Link>
         </div>
     )
 }

@@ -28,6 +28,15 @@ function buildPath(route:string) : string{
 
 
 function ClassInput(){
+    //generating user
+    const [userData, setUserData] = useState<any>(null);
+    useEffect(() => {
+        const storedUserData = localStorage.getItem('user_data');
+        if (storedUserData) {
+            setUserData(JSON.parse(storedUserData));
+        }
+    }, []);
+
     //time slots and days of week so user can update availability
     type TimeSlot = {
         start_time: string;
@@ -95,6 +104,45 @@ function ClassInput(){
         ));
     };
 
+    const addAvailability = async () => {
+        if (!userData) {
+            setMessage("User not logged in.");
+            return;
+        }
+    
+        const userId = userData.id;
+        console.log("user id:", userId)
+        console.log("availability:", JSON.stringify(availability, null, 2));
+        try {
+            const response = await fetch(buildPath('api/availability/update-availability'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, availability }),
+            });
+    
+                //         const response = await fetch('http://localhost:5002/api/availability/update-availability',
+                // {
+                //     method:'POST', 
+                //     headers:{'Content-Type': 'application/json'},
+                //     body:JSON.stringify({userId, availability}),
+                // });
+            console.log("API response:", response.status);
+            var res = await response.json();
+    
+            if (!response.ok) {
+                setMessage(res.error || "Failed to update availability.");
+                console.log("no ;-;");
+                return;
+            }
+    
+            setMessage("Availability updated successfully!");
+            console.log("yay!")
+        } catch (error) {
+            console.error("Error updating availability:", error);
+            setMessage("An error occurred while updating availability.");
+        }
+    };
+    
         // const [calendar, setCalendar] = React.useState<DayPilot.Calendar>();
     
         // const contextMenu = new DayPilot.Menu({
@@ -192,13 +240,10 @@ function ClassInput(){
             ...prevDifficulty,
             [index]: value.name
         }));
+        
     };
 
-    // const newDifficulty = (index: number, value: string) => {
-    //     setDifficulty({...difficulty, [index]: value});
-    // };
-
-
+    
     //adds exam slot for user
     const addNewExam = (index: number) => {
         setExams(prevExams => ({
@@ -209,14 +254,14 @@ function ClassInput(){
 
     //addexam api connection
     const addExam = async (index: number) => {
-        const courseTitle = courses[index];
+        const courseID = courses[index];
         const examDate = exams[index]; 
     
         // console.log("course title:", courseTitle);
         // console.log("exam date:", examDate);
     
-        if (!courseTitle || !examDate) {
-            setMessage("Course title and exam date are required.");
+        if (!courseID || !examDate) {
+            setMessage("Course ID and exam date are required.");
             return;
         }
 
@@ -226,16 +271,17 @@ function ClassInput(){
 
     
         const examData = {
-            userID: userData.id,
-            courseID: courseTitle,
-            examname: `${courseTitle} Exam #${examIndex + 1}`,
+            user: userData.id,
+            course: courseID,
+            examname: `${courseID} Exam #${examIndex + 1}`,
             examdate: examDate.toISOString(),
         };
     
-        // console.log("course title:", courseTitle);
-        // console.log("exam date:", examDate);
-        // console.log("exam name:", `${courseTitle} Exam #${examIndex + 1}`);
-        // console.log("user id:", userData.id);
+        //if the course ID is unique do i need an unique exam name? TEST once you recieve the api
+        console.log("course ID:", courseID);
+        console.log("exam date:", examDate);
+        console.log("exam name:", `${courseID} Exam #${examIndex + 1}`);
+        console.log("user id:", userData.id);
 
         try {
             const response = await fetch(buildPath('api/addexam'), {
@@ -251,10 +297,12 @@ function ClassInput(){
     
             if (!response.ok) {
                 setMessage(res.error || 'Failed to add exam.');
+                console.log("im crying");
                 return;
             }
     
             setMessage(res.message || 'Exam added successfully!');
+            console.log("omg yay!");
         } catch (error) {
             alert('Error: ' + error);
         }
@@ -275,29 +323,20 @@ function ClassInput(){
         return exams[courseIndex]?.map((date, examIndex) => (
             <div key={examIndex} className="exam-date">
                 <label className="custom-font">Exam Date:</label>
-                <Calendar
+                <Calendar id="calendar-24h"
                     value={date}
                     onChange={(e) => {
-                        const newExams = { ...exams };
-                        newExams[courseIndex][examIndex] = e.value as Date | null;
+                        const newExams = { ...exams }; newExams[courseIndex][examIndex] = e.value as Date | null;
                         setExams(newExams);
                     }}
-                    showTime
-                    hourFormat="24"
-                    className="custom-input"
+                    showTime hourFormat="24" className="custom-input"
                 />
                 <Button label="Remove Exam" onClick={() => removeExam(courseIndex, examIndex)} className="p-button-danger p-button-outlined" /> <br/>
             </div>
         ));
     };
 
-    const [userData, setUserData] = useState<any>(null);
-    useEffect(() => {
-        const storedUserData = localStorage.getItem('user_data');
-        if (storedUserData) {
-            setUserData(JSON.parse(storedUserData));
-        }
-    }, []);
+
 
     //add course api connection
     async function addCourse(event: any, index: number): Promise<void> {
@@ -358,7 +397,8 @@ function ClassInput(){
     function genSchedule(event:any) : void
     {
         event.preventDefault();
-        alert('genSchedule');
+        //alert('genSchedule');
+        window.location.href = '/dashboard';
     };
 
     return (
@@ -377,6 +417,8 @@ function ClassInput(){
                 </div>
             ))}
             <br />
+            <Button label="Add Availability" onClick={addAvailability} className="p-button-danger p-button-outlined" />
+            <br />
             <label className = "custom-font">How many classes are you taking? &nbsp;</label>
             <Dropdown value={selectedClassNum} onChange={(e) => setSelectedClassNum(e.value)} options={numClasses} optionLabel="name" placeholder="Select Number of Classes" className="custom-dropdown" panelStyle={{backgroundColor: 'white' }}/>
             <br /><br />
@@ -387,7 +429,7 @@ function ClassInput(){
                     <InputText value={courses} onChange={(e) => newCourse(index, e.target.value)} placeholder= "Enter Course" className = "custom-input" />
                     <label className = "custom-font">&nbsp; Difficulty: &nbsp; </label>
 
-                    <Dropdown value={difficulty[index]} onChange = {(e) => newDifficulty(index, e.value)} options={difficultyLevels} optionLabel="name" placeholder="Select Difficulty" className="custom-dropdown" panelStyle={{backgroundColor: 'white' }}/>
+                    <Dropdown value={difficulty[index] ? { name: difficulty[index], code: difficulty[index] } : null} onChange = {(e) => newDifficulty(index, e.value)} options={difficultyLevels} optionLabel="name" placeholder="Select Difficulty" className="custom-dropdown" panelStyle={{backgroundColor: 'white' }}/>
                     <br /><br />
 
                     <input type="submit" id="loginButton" className="custom-button" value = "Add Course"
@@ -406,7 +448,6 @@ function ClassInput(){
                 </div>
             ))}
             <br /><br />
-
             <Button label="Generate Schedule" onClick={genSchedule} className="custom-button primary" />
         </div>
     )

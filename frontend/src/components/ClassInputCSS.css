@@ -80,6 +80,17 @@
     color: white;
   }
 
+  .custom-input .p-datepicker {
+    min-width: 250px;
+  }
+
+  .p-datepicker-prev,.p-datepicker-next {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+
   .background {
     position: fixed;
     top: 0;
