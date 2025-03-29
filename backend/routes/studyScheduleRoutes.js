@@ -7,7 +7,6 @@ const StudySchedule = require('../models/studySchedule.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config({ path: './.env' });
 
-
 // Initialize Google AI SDK
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
@@ -57,28 +56,28 @@ async function generateStudySchedule(userData) {
   }
 }
 
-// Route to get AI-generated study schedule
+// Route to generate and store AI-generated study schedule
 router.post('/generate-schedule', async (req, res) => {
   try {
     const { userId } = req.body;
 
     // Fetch user data from MongoDB
-    const user = await User.findById(userId).populate('courses').populate('availabilityId');
+    const user = await User.findById(userId).populate('courses').populate('availability');
     if (!user) return res.status(404).json({ error: "User not found" });
 
     // Format user data for AI input
     const userData = {
-      courses: user.courses.map(course => course.courseTitle),
-      difficulty: Object.fromEntries(user.courses.map(course => [course.courseTitle, course.difficulty])),
-      exams: Object.fromEntries(user.courses.map(course => [course.courseTitle, course.examDate ? "yes" : "no"])),
-      availability: user.availabilityId
+      courses: user.courses.map(course => course.coursetitle),
+      difficulty: Object.fromEntries(user.courses.map(course => [course.coursetitle, course.difficulty])),
+      exams: Object.fromEntries(user.courses.map(course => [course.coursetitle, course.examDate ? course.examDate.toISOString() : "None"])),
+      availability: user.availability
     };
 
     // Generate study schedule using AI
     const generatedSchedule = await generateStudySchedule(userData);
 
     // Store generated schedule in MongoDB
-    const newSchedule = new Schedule({ userId, generatedSchedule });
+    const newSchedule = new StudySchedule({ userId, generatedSchedule });
     await newSchedule.save();
 
     res.status(201).json({ message: "Study schedule generated successfully", schedule: newSchedule });
