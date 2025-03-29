@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
         const { firstname, lastname } = userData;
 
         res.status(200).json({
-            userID: userData._id.toString(),
+            _id: userData._id.toString(),
             firstname: firstname,
             lastname: lastname,
             email: userData.email,
@@ -83,7 +83,7 @@ router.post('/register', async (req, res) => {
         //await sendMail(email, emailToken);
         // Respond with userID
         res.status(200).json({
-            userID: savedUser._id.toString(),
+            _id: savedUser._id.toString(),
             firstname: firstname,
             lastname: lastname,
             email: email,
