@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     isVerifiedEmail: { type: Boolean, default: false },
     emailToken: { type: String, default: null },
-    userID: {type: mongoose.Schema.Types.ObjectId, required: true, unique: true},
+    userID: {type: Number, required: true, unique: true},
     resetPasswordToken: { type: String }, 
     resetPasswordExpires: { type: Date },
     availabilityId: { type: mongoose.Schema.Types.ObjectId, ref: 'availability' },
