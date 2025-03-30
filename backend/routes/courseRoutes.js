@@ -52,12 +52,11 @@ router.delete('/deletecourse/:courseId', async (req, res) => {
     }
 });
 
-// Fetches ALL course IDs for a user
-router.get('/courses/ids/:userID', async (req, res) => {
+// Fetches ALL course information for a user
+router.get('/getcourseid/:userID', async (req, res) => {
     const { userID } = req.params;
-
     try {
-        const courses = await Course.find({ user: userID }, '_id coursetitle'); // Fetch only ID and title
+        const courses = await Course.find({ user: userID }, '_id coursetitle difficulty');
         if (!courses.length) {
             return res.status(404).json({ error: 'No courses found for this user.' });
         }
