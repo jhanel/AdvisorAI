@@ -89,7 +89,7 @@ router.post('/register', async (req, res) => {
         // Save user and get the stored document
         const savedUser = await newUser.save();
 
-        // await sendMail(email, emailToken);
+        await sendMail(email, emailToken);
         // Respond with userID
         res.status(200).json({
             userID: savedUser._id.toString(),
