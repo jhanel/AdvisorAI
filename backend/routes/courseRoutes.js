@@ -42,9 +42,9 @@ router.post('/addcourse', async (req, res) => {
 
 // Delete a course
 router.delete('/deletecourse', async (req, res) => {
-    const { userID, coursetitle, difficulty } = req.body;
+    const { userID, coursetitle } = req.body;
 
-    if (!userID || !coursetitle || !difficulty) {
+    if (!userID || !coursetitle) {
         return res.status(400).json({ error: 'Missing required field(s).' });
     }
 
@@ -52,7 +52,6 @@ router.delete('/deletecourse', async (req, res) => {
         const deletedCourse = await Course.findOneAndDelete({
             user: userID,
             coursetitle: { $regex: new RegExp('^' + coursetitle + '$', 'i') },
-            difficulty
         });
 
         if (!deletedCourse) {
