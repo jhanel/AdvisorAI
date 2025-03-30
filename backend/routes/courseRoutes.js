@@ -52,7 +52,7 @@ router.delete('/deletecourse/:courseId', async (req, res) => {
     }
 });
 
-// Fetches ALL course IDs for a user
+// Fetches ALL course information for a user
 router.get('/getcourseid/:userID', async (req, res) => {
     const { userID } = req.params;
     try {

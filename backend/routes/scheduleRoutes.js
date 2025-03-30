@@ -3,15 +3,14 @@ const router = express.Router();
 const User = require('../models/user');
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
-const sendMail = require('./tokenSender');
-const nodemailer = require('nodemailer');
-
+const { sendMail, sendPasswordReset } = require('./tokenSender');
 
 // Login API
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        // Find the user by email
         // Find the user by email
         const userData = await User.findOne({ email: email });
 
@@ -20,18 +19,25 @@ router.post('/login', async (req, res) => {
         }
 
         // Compare the provided password with the hashed password
+        // Compare the provided password with the hashed password
         const isMatch = await bcrypt.compare(password, userData.password);
+        if (!isMatch) {
         if (!isMatch) {
             return res.status(404).json({ error: 'Invalid credentials' });
         }
 
         // If the password matches, return the user information
         const { firstname, lastname } = userData;
+        // If the password matches, return the user information
+        const { firstname, lastname } = userData;
 
         res.status(200).json({
             userID: userData._id.toString(),
+            userID: userData._id.toString(),
             firstname: firstname,
             lastname: lastname,
+            email: userData.email,
+            password: password,
             email: userData.email,
             password: password,
             error: ''
@@ -48,11 +54,34 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     const { firstname, lastname, email, password } = req.body;
+    const { firstname, lastname, email, password } = req.body;
 
+    // Validate required fields
+    if (!firstname || !lastname || !email || !password) {
     // Validate required fields
     if (!firstname || !lastname || !email || !password) {
         return res.status(400).json({ error: 'Missing required field(s).' });
     }
+
+    // Password complexity checks
+    if (password.length < 8) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
+    }
+    if (!/[a-z]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one lowercase letter.' });
+    }
+    
+    if (!/[A-Z]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one uppercase letter.' });
+    }
+    
+    if (!/\d/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one number.' });
+    }
+    
+    if (!/[@$!%*?&]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one special character (@$!%*?&).' });
+    }    
 
     // Password complexity checks
     if (password.length < 8) {
@@ -70,8 +99,10 @@ router.post('/register', async (req, res) => {
         }
 
         // Hash password
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Generate email token
         // Generate email token
         const emailToken = crypto.randomBytes(64).toString("hex");
 
@@ -135,27 +166,7 @@ router.post('/passwordreset', async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000; // Expires in 1 hour
         await user.save();
 
-        // Send reset password email
-        const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-
-        // Reset password page
-        const resetURL = `http://studentadvisorai.xyz/resetpassword?token=${resetToken}`;
-
-        // Email details
-        const mailOptions = {
-            to: user.email,
-            from: process.env.EMAIL_USER,
-            subject: 'Password Reset Request',
-            text: `Click the link to reset your password: ${resetURL}`
-        };
-
-        await transporter.sendMail(mailOptions);
+        await sendPasswordReset(email, resetToken);
 
         res.status(200).json({ message: 'Password reset email sent.' });
     } catch (error) {
