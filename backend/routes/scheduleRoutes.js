@@ -6,7 +6,6 @@ const bcrypt = require("bcryptjs");
 const sendMail = require('./tokenSender');
 const nodemailer = require('nodemailer');
 
-
 // Login API
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -58,9 +57,21 @@ router.post('/register', async (req, res) => {
     if (password.length < 8) {
         return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
     }
-    if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password) || !/[@$!%*?&]/.test(password)) {
-        return res.status(400).json({ error: 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&).' });
+    if (!/[a-z]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one lowercase letter.' });
     }
+    
+    if (!/[A-Z]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one uppercase letter.' });
+    }
+    
+    if (!/\d/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one number.' });
+    }
+    
+    if (!/[@$!%*?&]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one special character (@$!%*?&).' });
+    }    
 
     try {
         // Check if email already exists
@@ -80,6 +91,7 @@ router.post('/register', async (req, res) => {
         // Save user and get the stored document
         const savedUser = await newUser.save();
 
+        //await sgMail.send(msg);
         await sendMail(email, emailToken);
         // Respond with userID
         res.status(200).json({
