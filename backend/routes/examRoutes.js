@@ -1,8 +1,8 @@
+const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const Exam = require('../models/exam');
 
-// Add a new exam
 router.post('/addexam', async (req, res) => {
     const { userID, courseID, examname, examdate } = req.body;
 
@@ -11,6 +11,17 @@ router.post('/addexam', async (req, res) => {
     }
 
     try {
+        // check for dupes
+        const existingExam = await Exam.findOne({
+            user: userID,
+            course: courseID,
+            examname: { $regex: new RegExp('^' + examname + '$', 'i') }
+        });
+
+        if (existingExam) {
+            return res.status(409).json({ error: 'Duplicate: Exam already exists.' });
+        }
+
         const newExam = new Exam({
             user: userID,
             course: courseID,
@@ -31,18 +42,28 @@ router.post('/addexam', async (req, res) => {
     }
 });
 
-// Delete an exam
-router.delete('/deleteexam/:examId', async (req, res) => {
-    const { examId } = req.params;
+// Delete exam
+router.delete('/deleteexam', async (req, res) => {
+    const { userID, courseID, examname, examdate } = req.body;
 
-    if (!examId) {
-        return res.status(400).json({ error: 'Missing exam ID.' });
+    if (!userID || !courseID || !examname) {
+        return res.status(400).json({ error: 'Missing required field(s).' });
     }
 
     try {
-        const deleted = await Exam.findByIdAndDelete(examId);
+        const query = {
+            user: userID,
+            course: courseID,
+            examname: { $regex: new RegExp('^' + examname + '$', 'i') } // exact but case-insensitive
+        };
 
-        if (!deleted) {
+        if (examdate) {
+            query.examdate = examdate;
+        }
+
+        const deletedExam = await Exam.findOneAndDelete(query);
+
+        if (!deletedExam) {
             return res.status(404).json({ error: 'Exam not found.' });
         }
 
@@ -53,37 +74,31 @@ router.delete('/deleteexam/:examId', async (req, res) => {
     }
 });
 
-// Edit an exam
-router.patch('/editexam/:examId', async (req, res) => {
-    const { examId } = req.params;
-    const { examname, examdate } = req.body;
+// Get exam ID
+router.get('/getexamid/:userID', async (req, res) => {
+    const { userID } = req.params;
+    const { courseID } = req.query;
 
-    if (!examname && !examdate) {
-        return res.status(400).json({ error: 'Nothing to update.' });
+    if (!userID) {
+        return res.status(400).json({ error: 'Missing user ID.' });
     }
 
     try {
-        const updateFields = {};
-        if (examname) updateFields.examname = examname;
-        if (examdate) updateFields.examdate = examdate;
-
-        const updatedExam = await Exam.findByIdAndUpdate(
-            examId,
-            { $set: updateFields },
-            { new: true }
-        );
-
-        if (!updatedExam) {
-            return res.status(404).json({ error: 'Exam not found.' });
+        const filter = { user: userID };
+        if (courseID) {
+            filter.course = courseID;
         }
 
-        res.status(200).json({
-            message: 'Exam updated successfully.',
-            exam: updatedExam
-        });
+        const exams = await Exam.find(filter, '_id examname examdate course');
+
+        if (!exams.length) {
+            return res.status(404).json({ error: 'No exams found for this user.' });
+        }
+
+        res.status(200).json(exams);
     } catch (err) {
-        console.error('Error editing exam:', err);
-        res.status(500).json({ error: 'Failed to update exam.' });
+        console.error('Error fetching exams:', err);
+        res.status(500).json({ error: 'Failed to fetch exam IDs.' });
     }
 });
 
