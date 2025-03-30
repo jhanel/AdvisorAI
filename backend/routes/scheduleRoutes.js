@@ -11,7 +11,6 @@ router.post('/login', async (req, res) => {
 
     try {
         // Find the user by email
-        // Find the user by email
         const userData = await User.findOne({ email: email });
 
         if (!userData) {
@@ -19,25 +18,18 @@ router.post('/login', async (req, res) => {
         }
 
         // Compare the provided password with the hashed password
-        // Compare the provided password with the hashed password
         const isMatch = await bcrypt.compare(password, userData.password);
-        if (!isMatch) {
         if (!isMatch) {
             return res.status(404).json({ error: 'Invalid credentials' });
         }
 
         // If the password matches, return the user information
         const { firstname, lastname } = userData;
-        // If the password matches, return the user information
-        const { firstname, lastname } = userData;
 
         res.status(200).json({
             userID: userData._id.toString(),
-            userID: userData._id.toString(),
             firstname: firstname,
             lastname: lastname,
-            email: userData.email,
-            password: password,
             email: userData.email,
             password: password,
             error: ''
@@ -49,15 +41,11 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
 // Register API
 
 router.post('/register', async (req, res) => {
     const { firstname, lastname, email, password } = req.body;
-    const { firstname, lastname, email, password } = req.body;
 
-    // Validate required fields
-    if (!firstname || !lastname || !email || !password) {
     // Validate required fields
     if (!firstname || !lastname || !email || !password) {
         return res.status(400).json({ error: 'Missing required field(s).' });
@@ -83,14 +71,6 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ error: 'Password must contain at least one special character (@$!%*?&).' });
     }    
 
-    // Password complexity checks
-    if (password.length < 8) {
-        return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
-    }
-    if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password) || !/[@$!%*?&]/.test(password)) {
-        return res.status(400).json({ error: 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&).' });
-    }
-
     try {
         // Check if email already exists
         const existingUser = await User.findOne({ email });
@@ -99,10 +79,8 @@ router.post('/register', async (req, res) => {
         }
 
         // Hash password
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Generate email token
         // Generate email token
         const emailToken = crypto.randomBytes(64).toString("hex");
 
@@ -111,7 +89,7 @@ router.post('/register', async (req, res) => {
         // Save user and get the stored document
         const savedUser = await newUser.save();
 
-        //await sendMail(email, emailToken);
+        await sendMail(email, emailToken);
         // Respond with userID
         res.status(200).json({
             userID: savedUser._id.toString(),
