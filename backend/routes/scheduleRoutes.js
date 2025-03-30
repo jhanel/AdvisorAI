@@ -3,8 +3,7 @@ const router = express.Router();
 const User = require('../models/user');
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
-const sendMail = require('./tokenSender');
-const nodemailer = require('nodemailer');
+const { sendMail, sendPasswordReset } = require('./tokenSender');
 
 // Login API
 router.post('/login', async (req, res) => {
@@ -41,7 +40,6 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
 
 // Register API
 
@@ -91,7 +89,6 @@ router.post('/register', async (req, res) => {
         // Save user and get the stored document
         const savedUser = await newUser.save();
 
-        //await sgMail.send(msg);
         await sendMail(email, emailToken);
         // Respond with userID
         res.status(200).json({
@@ -147,27 +144,7 @@ router.post('/passwordreset', async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000; // Expires in 1 hour
         await user.save();
 
-        // Send reset password email
-        const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-
-        // Reset password page
-        const resetURL = `http://studentadvisorai.xyz/resetpassword?token=${resetToken}`;
-
-        // Email details
-        const mailOptions = {
-            to: user.email,
-            from: process.env.EMAIL_USER,
-            subject: 'Password Reset Request',
-            text: `Click the link to reset your password: ${resetURL}`
-        };
-
-        await transporter.sendMail(mailOptions);
+        await sendPasswordReset(email, resetToken);
 
         res.status(200).json({ message: 'Password reset email sent.' });
     } catch (error) {

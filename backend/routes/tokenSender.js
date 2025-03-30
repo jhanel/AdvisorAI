@@ -23,4 +23,25 @@ const sendMail = async (email, emailToken) => {
     }
 };
 
-module.exports = sendMail;
+const sendPasswordReset = async (email, resetToken) => {
+    try {
+        const resetURL = `${process.env.SERVER_URL}/api/resetpassword?token=${resetToken}`;
+
+        const msg = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: 'AdvisorAI Password Reset',
+            html: `<p>Reset your password in AdvisorAI</p>
+                   <br>
+                   <a href="${resetURL}">Reset your password here</a>`
+        };
+
+        await sgMail.send(msg);
+        console.log('Reset Password email sent successfully to:', email);
+    }
+    catch (err) {
+        console.error('Error sending reset password email:', err);
+    }
+};
+
+module.exports = { sendMail, sendPasswordReset };
