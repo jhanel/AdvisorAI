@@ -6,7 +6,8 @@ const Availability = require('../models/Availability.js');
 const StudySchedule = require('../models/studySchedule.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Exam = require('../models/exam'); 
-require('dotenv').config({ path: './.env' });
+require('dotenv').config({ path: './.env' })
+const mongoose = require('mongoose');
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
@@ -146,5 +147,30 @@ router.post('/generate-schedule', async (req, res) => {
     res.status(500).json({ error: "Failed to generate study schedule." });
   }
 });
+
+// Get study schedule for users
+router.get('/get-AIschedule/:userId', async (req, res) => {
+  try {
+      const { userId } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+          return res.status(400).json({ error: "Invalid User ID format" });
+      }
+
+      // Convert to ObjectId and search for the schedule
+      const schedule = await StudySchedule.findOne({ userId: new mongoose.Types.ObjectId(userId) });
+
+      if (!schedule) {
+          return res.status(404).json({ error: "Study schedule not found for this user" });
+      }
+
+      return res.status(200).json(schedule);
+  } catch (error) {
+      console.error("Error fetching study schedule:", error);  // Log full error for debugging
+      return res.status(500).json({ error: "Internal server error", details: error.message });
+  }
+});
+
+
 
 module.exports = router;
