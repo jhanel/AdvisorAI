@@ -110,24 +110,25 @@ router.post('/register', async (req, res) => {
 
 router.patch("/verifyemail", async (req, res) => {
     const { emailToken } = req.body;
-  
+    
     if (!emailToken) {
-      return res.status(400).json({ status: "Failed", error: "empty request" });
+        return res.status(400).json({ status: "Failed", error: "empty request" });
     }
-  
-    let user = await User.findOne({ where: { emailToken } });
-  
+
+    // Find user by emailToken
+    let user = await User.findOne({ emailToken });
+
     if (!user) {
-      return res.status(404).json({ status: "Failed", error: "User not found" });
+        return res.status(404).json({ status: "Failed", error: "User not found" });
     }
-  
-    await User.update(
-      { isVerifiedEmail: true, emailToken: null },
-      { where: { emailToken } }
-    );
-  
+
+    // Update user verification status
+    user.isVerifiedEmail = true;
+    user.emailToken = null;
+    await user.save();
+
     return res.status(200).json({ status: "Success", message: "User verified successfully" });
-  });
+});
 
 // Sends email for password reset
 router.post('/passwordreset', async (req, res) => {
