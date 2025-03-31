@@ -9,6 +9,8 @@ import DashboardPage from './pages/DashboardPage.tsx';
 import ClassInputPage from './pages/ClassInputPage.tsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx';
 import HomePage from './pages/HomePage.tsx'
+import VerifyEmailPage from './pages/VerifyEmailPage.tsx';
+import ResetPasswordPage from './pages/ResetPasswordPage.tsx';
 
 function App() {
   return (
@@ -33,6 +35,9 @@ function App() {
         <Route path='/dashboard' element={<DashboardPage />}/>
         <Route path='/input' element={<ClassInputPage />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
+        <Route path="/reset" element={<ResetPasswordPage />} />
+        <Route path="/verify" element={<VerifyEmailPage />} />
+        <Route path="/verifyemail" element={<VerifyEmailPage />} />
       </Routes>
     </div>
   );

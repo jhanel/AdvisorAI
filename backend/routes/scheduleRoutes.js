@@ -3,9 +3,7 @@ const router = express.Router();
 const User = require('../models/user');
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
-const sendMail = require('./tokenSender');
-const nodemailer = require('nodemailer');
-
+const { sendMail, sendPasswordReset } = require('./tokenSender');
 
 // Login API
 router.post('/login', async (req, res) => {
@@ -43,7 +41,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
 // Register API
 
 router.post('/register', async (req, res) => {
@@ -58,9 +55,21 @@ router.post('/register', async (req, res) => {
     if (password.length < 8) {
         return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
     }
-    if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password) || !/[@$!%*?&]/.test(password)) {
-        return res.status(400).json({ error: 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&).' });
+    if (!/[a-z]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one lowercase letter.' });
     }
+    
+    if (!/[A-Z]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one uppercase letter.' });
+    }
+    
+    if (!/\d/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one number.' });
+    }
+    
+    if (!/[@$!%*?&]/.test(password)) {
+        return res.status(400).json({ error: 'Password must contain at least one special character (@$!%*?&).' });
+    }    
 
     try {
         // Check if email already exists
@@ -80,7 +89,7 @@ router.post('/register', async (req, res) => {
         // Save user and get the stored document
         const savedUser = await newUser.save();
 
-        //await sendMail(email, emailToken);
+        await sendMail(email, emailToken);
         // Respond with userID
         res.status(200).json({
             userID: savedUser._id.toString(),
@@ -101,24 +110,25 @@ router.post('/register', async (req, res) => {
 
 router.patch("/verifyemail", async (req, res) => {
     const { emailToken } = req.body;
-  
+    
     if (!emailToken) {
-      return res.status(400).json({ status: "Failed", error: "empty request" });
+        return res.status(400).json({ status: "Failed", error: "empty request" });
     }
-  
-    let user = await User.findOne({ where: { emailToken } });
-  
+
+    // Find user by emailToken
+    let user = await User.findOne({ emailToken });
+
     if (!user) {
-      return res.status(404).json({ status: "Failed", error: "User not found" });
+        return res.status(404).json({ status: "Failed", error: "User not found" });
     }
-  
-    await User.update(
-      { isVerifiedEmail: true, emailToken: null },
-      { where: { emailToken } }
-    );
-  
+
+    // Update user verification status
+    user.isVerifiedEmail = true;
+    user.emailToken = null;
+    await user.save();
+
     return res.status(200).json({ status: "Success", message: "User verified successfully" });
-  });
+});
 
 // Sends email for password reset
 router.post('/passwordreset', async (req, res) => {
@@ -135,27 +145,7 @@ router.post('/passwordreset', async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000; // Expires in 1 hour
         await user.save();
 
-        // Send reset password email
-        const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-
-        // Reset password page
-        const resetURL = `http://studentadvisorai.xyz/resetpassword?token=${resetToken}`;
-
-        // Email details
-        const mailOptions = {
-            to: user.email,
-            from: process.env.EMAIL_USER,
-            subject: 'Password Reset Request',
-            text: `Click the link to reset your password: ${resetURL}`
-        };
-
-        await transporter.sendMail(mailOptions);
+        await sendPasswordReset(email, resetToken);
 
         res.status(200).json({ message: 'Password reset email sent.' });
     } catch (error) {
@@ -170,6 +160,25 @@ router.post('/resetpassword', async (req, res) => {
     try {
         const { token, newPassword } = req.body;
         if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password are required.' });
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
+        }
+        if (!/[a-z]/.test(newPassword)) {
+            return res.status(400).json({ error: 'Password must contain at least one lowercase letter.' });
+        }
+        
+        if (!/[A-Z]/.test(newPassword)) {
+            return res.status(400).json({ error: 'Password must contain at least one uppercase letter.' });
+        }
+        
+        if (!/\d/.test(newPassword)) {
+            return res.status(400).json({ error: 'Password must contain at least one number.' });
+        }
+        
+        if (!/[@$!%*?&]/.test(newPassword)) {
+            return res.status(400).json({ error: 'Password must contain at least one special character (@$!%*?&).' });
+        }    
 
         const user = await User.findOne({
             resetPasswordToken: token,

@@ -1,40 +1,47 @@
-const nodemailer = require("nodemailer");
+require('dotenv').config();
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.API_KEY);
 
-// send mail function for email verification
 const sendMail = async (email, emailToken) => {
     try {
-
-        // transporting the email with nodemailer
-        const transport = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD
-            },
-        });
-    
         const verificationLink = `${process.env.SERVER_URL}/api/verifyemail?emailToken=${emailToken}`;
-    
-        // email info from AdvisorAI to the user
-        const mailOptions = {
+
+        const msg = {
             from: process.env.EMAIL,
-            to: `${email}`,
+            to: email,
             subject: 'AdvisorAI Email Verification',
-            html:`<p> Verify your email address in AdvisorAI </p>
-            <br>
-            <a href="${verificationLink}">Verify your email here</a>
-            `
+            html: `<p>Verify your email address in AdvisorAI</p>
+                   <br>
+                   <a href="${verificationLink}">Verify your email here</a>`
         };
-    
-        // sending the email
-        const info = await transport.sendMail(mailOptions);
-        console.log("Email sent:", info.response);
+
+        await sgMail.send(msg);
+        console.log('Email sent successfully to:', email);
+
+    } catch (err) {
+        console.error('Error sending email:', err);
+    }
+};
+
+const sendPasswordReset = async (email, resetToken) => {
+    try {
+        const resetURL = `${process.env.SERVER_URL}/api/resetpassword?token=${resetToken}`;
+
+        const msg = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: 'AdvisorAI Password Reset',
+            html: `<p>Reset your password in AdvisorAI</p>
+                   <br>
+                   <a href="${resetURL}">Reset your password here</a>`
+        };
+
+        await sgMail.send(msg);
+        console.log('Reset Password email sent successfully to:', email);
     }
     catch (err) {
-        console.error("Error sending email:", err);
+        console.error('Error sending reset password email:', err);
     }
-}
+};
 
-module.exports = sendMail;
+module.exports = { sendMail, sendPasswordReset };

@@ -11,6 +11,18 @@ router.post('/addexam', async (req, res) => {
     }
 
     try {
+        // check for dupes exam
+        const existingExam = await Exam.findOne({
+            user: userID,
+            course: courseID,
+            examname: { $regex: new RegExp('^' + examname + '$', 'i') },
+            examdate
+        });
+
+        if (existingExam) {
+            return res.status(409).json({ error: 'Duplicate: Exam already exists.' });
+        }
+
         const newExam = new Exam({
             user: userID,
             course: courseID,
@@ -21,7 +33,7 @@ router.post('/addexam', async (req, res) => {
         const savedExam = await newExam.save();
 
         res.status(200).json({
-            message: 'Exam added successfully.',
+            message: 'Exam added successfully!',
             examID: savedExam._id.toString(),
             exam: savedExam
         });
@@ -32,21 +44,31 @@ router.post('/addexam', async (req, res) => {
 });
 
 // Delete an exam
-router.delete('/deleteexam/:examId', async (req, res) => {
-    const { examId } = req.params;
+router.delete('/deleteexam', async (req, res) => {
+    const { userID, courseID, examname, examdate } = req.body;
 
-    if (!examId) {
-        return res.status(400).json({ error: 'Missing exam ID.' });
+    if (!userID || !courseID || !examname) {
+        return res.status(400).json({ error: 'Missing required field(s).' });
     }
 
     try {
-        const deleted = await Exam.findByIdAndDelete(examId);
+        const query = {
+            user: userID,
+            course: courseID,
+            examname: { $regex: new RegExp('^' + examname + '$', 'i') } // exact name but case-insensitive
+        };
 
-        if (!deleted) {
+        if (examdate) {
+            query.examdate = examdate;
+        }
+
+        const deletedExam = await Exam.findOneAndDelete(query);
+
+        if (!deletedExam) {
             return res.status(404).json({ error: 'Exam not found.' });
         }
 
-        res.status(200).json({ message: 'Exam deleted successfully.' });
+        res.status(200).json({ message: 'Exam deleted successfully!' });
     } catch (err) {
         console.error('Error deleting exam:', err);
         res.status(500).json({ error: 'Failed to delete exam.' });
@@ -78,12 +100,40 @@ router.patch('/editexam/:examId', async (req, res) => {
         }
 
         res.status(200).json({
-            message: 'Exam updated successfully.',
+            message: 'Exam updated successfully!',
             exam: updatedExam
         });
     } catch (err) {
         console.error('Error editing exam:', err);
         res.status(500).json({ error: 'Failed to update exam.' });
+    }
+});
+
+// Get exam ID
+router.get('/getexamid/:userID', async (req, res) => {
+    const { userID } = req.params;
+    const { courseID } = req.query;
+
+    if (!userID) {
+        return res.status(400).json({ error: 'Missing user ID.' });
+    }
+
+    try {
+        const filter = { user: userID };
+        if (courseID) {
+            filter.course = courseID;
+        }
+
+        const exams = await Exam.find(filter, '_id examname examdate course');
+
+        if (!exams.length) {
+            return res.status(404).json({ error: 'No exams found.' });
+        }
+
+        res.status(200).json(exams);
+    } catch (err) {
+        console.error('Error fetching exams:', err);
+        res.status(500).json({ error: 'Failed to fetch exam IDs.' });
     }
 });
 

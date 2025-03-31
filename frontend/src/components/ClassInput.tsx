@@ -252,35 +252,84 @@ function ClassInput(){
         }));
     };
 
+
+    //fetch course id for addexam api connection
+    const fetchCourseID = async (userID: string, courseTitle: string) => {
+        try {
+            const response = await fetch(buildPath(`api/getcourseid/${userID}`), {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch course IDs.'),
+                console.log("nah");
+            }
+    
+            const courses = await response.json();
+
+            if (!courses || courses.length === 0) {
+                throw new Error('No courses found for this user.');
+            }
+
+            const course = courses.find((c: any) => c.coursetitle === courseTitle);
+            if (!course) {
+                console.log("course title not found");
+                return null;
+            }
+    
+            console.log("success! course id:", course);
+            return course ? course._id : null;
+        } catch (error) {
+            console.error('Error fetching course IDs:', error);
+            console.log("500 error");
+            return [];
+        }
+    };
+
     //addexam api connection
     const addExam = async (index: number) => {
-        const courseID = courses[index];
         const examDate = exams[index]; 
+        const courseTitle = courses[index];
+        const courseID = await fetchCourseID(userData.id, courseTitle);
+
     
-        // console.log("course title:", courseTitle);
-        // console.log("exam date:", examDate);
-    
-        if (!courseID || !examDate) {
-            setMessage("Course ID and exam date are required.");
+        if (!courseID || !examDate || !courseTitle) {
+            setMessage("Course ID, Course title, and exam date are required.");
             return;
         }
+        // console.log("course ID:", courseID);
+        // console.log("exam date:", examDate);
 
         //for unique exam names
         const uniqueNames = examDate.map(async (examDate, examIndex) => {
             if (!examDate) return;
 
+            const dateObj = new Date(examDate);
     
+            //for proper api formatting
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+
+        
+            // format: yyyy-mm-ddTHH:MM:SS.sss
+            const formattedExamDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
         const examData = {
-            user: userData.id,
-            course: courseID,
-            examname: `${courseID} Exam #${examIndex + 1}`,
-            examdate: examDate.toISOString(),
+            userID: userData.id,
+            courseID: courseID,
+            examname: `${courseTitle} Exam #${examIndex + 1}`,
+            examdate: formattedExamDate,
         };
     
         //if the course ID is unique do i need an unique exam name? TEST once you recieve the api
         console.log("course ID:", courseID);
-        console.log("exam date:", examDate);
-        console.log("exam name:", `${courseID} Exam #${examIndex + 1}`);
+        console.log("exam date:", formattedExamDate);
+        console.log("exam name:", `${courseTitle} Exam #${examIndex + 1}`);
         console.log("user id:", userData.id);
 
         try {
@@ -302,7 +351,7 @@ function ClassInput(){
             }
     
             setMessage(res.message || 'Exam added successfully!');
-            console.log("omg yay!");
+            console.log("omg yay im still crying!");
         } catch (error) {
             alert('Error: ' + error);
         }
