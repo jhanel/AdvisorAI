@@ -15,7 +15,8 @@ router.post('/addexam', async (req, res) => {
         const existingExam = await Exam.findOne({
             user: userID,
             course: courseID,
-            examname: { $regex: new RegExp('^' + examname + '$', 'i') }
+            examname: { $regex: new RegExp('^' + examname + '$', 'i') },
+            examdate
         });
 
         if (existingExam) {
