@@ -1,0 +1,137 @@
+.class-input-container {
+    background-color: #e7d8cc;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: black;
+  }
+  
+  .title {
+    font-size: px;
+    font-weight: bold;
+    color: #6E2F2C;
+    margin-bottom: 20px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    
+  }
+  
+  .custom-dropdown, .custom-input {
+    background-color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px;
+    color: black;
+    width: 200px;
+    margin: 10px 5px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+  
+  .custom-dropdown .p-dropdown-label {
+    color: black;
+  }
+  
+  .course-container {
+    background-color: #ebccb0;
+    padding: 15px;
+    color:black;
+    border-radius: 10px;
+    margin: 10px auto;
+    width: 60%;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+  
+  .exam-container {
+    margin-top: 10px;
+    color: black;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+  
+  h2{
+    color:#6E2F2C;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+
+  h1{
+    color:#6E2F2C;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+
+  .custom-button {
+    background-color: #04919b;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 15px;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+  }
+  
+  .custom-button:hover {
+    background-color: #026666;
+  }
+  
+  .primary {
+    background-color: #006076;
+    color: white;
+  }
+
+  .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url("/green-simple-back.jpg");
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+  }
+
+  .custom-day {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: black;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+
+
+  .custom-font {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: black;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+
+
+  .falling-leaves {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+  }
+  
+  .leaf {
+    position: absolute;
+    top: -0vh;
+    font-size: 1.25rem; /* changes the size of the emoji */
+    animation: fall linear infinite;
+  }
+  
+  @keyframes fall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+    }
+  }
+  

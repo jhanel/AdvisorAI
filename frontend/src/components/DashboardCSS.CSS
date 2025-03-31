@@ -1,0 +1,26 @@
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url("/green-simple-back.jpg");
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+  }  
+  
+  .custom-button {
+    background-color: #009da8;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 15px;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .custom-button:hover {
+    background-color: #006076;
+  }
