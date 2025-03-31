@@ -161,6 +161,25 @@ router.post('/resetpassword', async (req, res) => {
         const { token, newPassword } = req.body;
         if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password are required.' });
 
+        if (newPassword.length < 8) {
+            return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
+        }
+        if (!/[a-z]/.test(newPassword)) {
+            return res.status(400).json({ error: 'Password must contain at least one lowercase letter.' });
+        }
+        
+        if (!/[A-Z]/.test(newPassword)) {
+            return res.status(400).json({ error: 'Password must contain at least one uppercase letter.' });
+        }
+        
+        if (!/\d/.test(newPassword)) {
+            return res.status(400).json({ error: 'Password must contain at least one number.' });
+        }
+        
+        if (!/[@$!%*?&]/.test(newPassword)) {
+            return res.status(400).json({ error: 'Password must contain at least one special character (@$!%*?&).' });
+        }    
+
         const user = await User.findOne({
             resetPasswordToken: token,
             resetPasswordExpires: { $gt: Date.now() }
