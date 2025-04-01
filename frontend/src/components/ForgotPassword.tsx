@@ -24,7 +24,7 @@ function ForgotPassword() {
     const js = JSON.stringify(obj);
 
     try {
-      const response = await fetch(buildPath('api/schedule/forgot-password'), {
+      const response = await fetch(buildPath('api/schedule/passwordreset'), {
         method: 'POST',
         body: js,
         headers: { 'Content-Type': 'application/json' },

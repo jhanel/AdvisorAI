@@ -29,7 +29,7 @@ function VerifyEmail() {
       }
 
       try {
-        const response = await fetch(buildPath('api/schedule/verify-email'), {
+        const response = await fetch(buildPath('api/schedule/verifyemail'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token }),
