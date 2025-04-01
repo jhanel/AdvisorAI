@@ -158,7 +158,7 @@ router.post('/passwordreset', async (req, res) => {
 // Changes the password
 router.post('/resetpassword', async (req, res) => {
     try {
-        const { token, newPassword } = req.body;
+        const { token, newPassword, confirmPassword } = req.body;
         if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password are required.' });
 
         if (newPassword.length < 8) {
@@ -180,6 +180,8 @@ router.post('/resetpassword', async (req, res) => {
             return res.status(400).json({ error: 'Password must contain at least one special character (@$!%*?&).' });
         }    
 
+        if (newPassword !== confirmPassword) return res.status(400).json({ error: 'Passwords do not match.' });
+        
         const user = await User.findOne({
             resetPasswordToken: token,
             resetPasswordExpires: { $gt: Date.now() }
