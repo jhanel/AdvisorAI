@@ -97,7 +97,7 @@ function Register()
              <input type="text" className = "input-container" id="registerEmail" placeholder="Email" onChange={handleSetRegisterEmail}/><br />
              <input type="password" className = "input-container" id="registerPassword" placeholder="Password" onChange={handleSetRegisterPassword}/><br />
              <br/>
-             <input type="submit" id="loginButton" className="custom-button" value = "Do It"
+             <input type="submit" id="loginButton" className="custom-button" value = "Register"
                  onClick={doRegister} /><br />
              <span id="registerResult">{message}</span><br/>
             <br></br>

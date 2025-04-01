@@ -69,7 +69,7 @@ function Login()
             <h2 id="inner-title" className = "title">Enter Information to Login:</h2>
             <input type="text" id="loginName" className = "input-container" placeholder="Email" onChange={handleSetLoginName}/><br />
             <input type="password" id="loginPassword" placeholder="Password"  className = "input-container" onChange={handleSetPassword} /><br />
-            <input type="submit" id="loginButton" className="custom-button" value = "Do It"
+            <input type="submit" id="loginButton" className="custom-button" value = "Login"
                 onClick={doLogin} /><br />
             <h3 id="loginResult">{message}</h3>
             <h3>Don't have an account? <br />
@@ -77,7 +77,7 @@ function Login()
                 <button className = "custom-button">Register</button></Link>
             </h3>
             <br/>
-            <Link to = "/forgot">Forgot Password?</Link>
+            <Link to = "/passwordreset" className="custom-font">Forgot Password?</Link>
         </div>
         
     );

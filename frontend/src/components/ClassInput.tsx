@@ -371,15 +371,14 @@ function ClassInput(){
     const renderExamDates = (courseIndex: number) => {
         return exams[courseIndex]?.map((date, examIndex) => (
             <div key={examIndex} className="exam-date">
-                <label className="custom-font">Exam Date:</label>
                 <Calendar id="calendar-24h"
-                    value={date}
-                    onChange={(e) => {
-                        const newExams = { ...exams }; newExams[courseIndex][examIndex] = e.value as Date | null;
-                        setExams(newExams);
+                value={date}    
+                onChange={(e) => {
+                    const newExams = { ...exams }; newExams[courseIndex][examIndex] = e.value as Date | null;
+                    setExams(newExams);
                     }}
                     showTime hourFormat="24" className="custom-input"
-                />
+            />
                 <Button label="Remove Exam" onClick={() => removeExam(courseIndex, examIndex)} className="p-button-danger p-button-outlined" /> <br/>
             </div>
         ));
@@ -450,6 +449,8 @@ function ClassInput(){
         window.location.href = '/dashboard';
     };
 
+    
+
     return (
         <div className="class-input-container">
             <div className = "background" ></div>
@@ -481,10 +482,9 @@ function ClassInput(){
                     <Dropdown value={difficulty[index] ? { name: difficulty[index], code: difficulty[index] } : null} onChange = {(e) => newDifficulty(index, e.value)} options={difficultyLevels} optionLabel="name" placeholder="Select Difficulty" className="custom-dropdown" panelStyle={{backgroundColor: 'white' }}/>
                     <br /><br />
 
-                    <input type="submit" id="loginButton" className="custom-button" value = "Add Course"
+                    <Button label="Add Course" id="addCourseButton" className="p-button-danger p-button-outlined" 
                  onClick={(event) => addCourse(event, index)} /><br />
 
-                 <span id="addCourseResults">{message}</span><br/>
                     <div className="exam-container">
                         <label className="custom-font">Exam Dates for {courses}: </label>
                         {renderExamDates(index)}
@@ -497,7 +497,8 @@ function ClassInput(){
                 </div>
             ))}
             <br /><br />
-            <Button label="Generate Schedule" onClick={genSchedule} className="custom-button primary" />
+            <span id="addCourseResults">{message}</span><br/>
+            <Button label="To Study Plan" onClick={genSchedule} className="custom-button primary" />
         </div>
     )
 

@@ -39,7 +39,7 @@ function ResetPassword() {
     const js = JSON.stringify(obj);
 
     try {
-      const response = await fetch(buildPath('api/schedule/reset-password'), {
+      const response = await fetch(buildPath('api/schedule/resetpassword'), {
         method: 'POST',
         body: js,
         headers: { 'Content-Type': 'application/json' },

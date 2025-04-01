@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FallingLeaves from './FallingLeaves';
 import './LoginCSS.css';
 
@@ -29,7 +29,7 @@ function VerifyEmail() {
       }
 
       try {
-        const response = await fetch(buildPath('api/schedule/verify-email'), {
+        const response = await fetch(buildPath('api/schedule/verifyemail'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token }),
@@ -56,20 +56,6 @@ function VerifyEmail() {
     <div>
       <div className="background"></div>
       <FallingLeaves />
-
-      {/* Logo */}
-      <div className="logo-place">
-        <img src="/public/advisorLogo.png" alt="Logo" className="logo" />
-      </div>
-
-      {/* Nav Bar */}
-      <nav className="navBar">
-        <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><a href="https://github.com/jhanel/AdvisorAI" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-          <li><Link to="/dashboard">Dashboard</Link></li>
-        </ul>
-      </nav>
 
       {/* Styled Box */}
       <div className="loginBox">

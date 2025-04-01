@@ -19,7 +19,7 @@ function App() {
       <ul>
         <li><Link to="/">Home</Link></li>
         <li><a href="https://github.com/jhanel/AdvisorAI">Github</a></li>
-        <li><Link to="/dashboard">Dashboard</Link></li>
+        <li><Link to= "/login">Logout</Link></li>
       </ul>
       </nav>
       <div className ="logo-place">
@@ -34,7 +34,7 @@ function App() {
         <Route path='/register' element={<RegisterPage />}/>
         <Route path='/dashboard' element={<DashboardPage />}/>
         <Route path='/input' element={<ClassInputPage />} />
-        <Route path="/forgot" element={<ForgotPasswordPage />} />
+        <Route path="/passwordreset" element={<ForgotPasswordPage />} />
         <Route path="/reset" element={<ResetPasswordPage />} />
         <Route path="/verify" element={<VerifyEmailPage />} />
         <Route path="/verifyemail" element={<VerifyEmailPage />} />
