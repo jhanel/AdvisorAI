@@ -158,8 +158,8 @@ router.post('/passwordreset', async (req, res) => {
 // Changes the password
 router.post('/resetpassword', async (req, res) => {
     try {
-        const { token, newPassword, confirmPassword } = req.body;
-        if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password are required.' });
+        const { newPassword, confirmPassword } = req.body;
+        if (!newPassword) return res.status(400).json({ error: 'New password is required.' });
 
         if (newPassword.length < 8) {
             return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
