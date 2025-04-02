@@ -4,7 +4,8 @@ sgMail.setApiKey(process.env.API_KEY);
 
 const sendMail = async (email, emailToken) => {
     try {
-        const verificationLink = `${process.env.SERVER_URL}/api/verifyemail?emailToken=${emailToken}`;
+        // Change the verification link to point to the frontend
+        const verificationLink = `${process.env.CLIENT_URL}/verifyemail?emailToken=${emailToken}`;
 
         const msg = {
             from: process.env.EMAIL,
@@ -25,7 +26,7 @@ const sendMail = async (email, emailToken) => {
 
 const sendPasswordReset = async (email, resetToken) => {
     try {
-        const resetURL = `${process.env.SERVER_URL}/api/resetpassword?token=${resetToken}`;
+        const resetURL = `${process.env.CLIENT_URL}/api/resetpassword?token=${resetToken}`;
 
         const msg = {
             from: process.env.EMAIL,
